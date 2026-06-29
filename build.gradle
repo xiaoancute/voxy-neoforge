@@ -72,7 +72,7 @@ repositories {
         forRepository {
             maven {
                 name "caffeinemcRepository"
-                url "https://maven.caffeinemc.net/snapshots"
+                url "https://maven.caffeinemc.net/releases"
             }
         }
         filter {
@@ -178,7 +178,8 @@ dependencies {
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${project.forgified_fabric_version}"
 
     // Sodium 0.8 backport for NeoForge 1.21.1
-    implementation "maven.modrinth:sodium:mc1.21.1-0.8.12-beta.2-neoforge"
+    implementation "net.caffeinemc:sodium-neoforge:0.8.12-beta.2+mc1.21.1"
+    compileOnly "net.caffeinemc:sodium-neoforge-mod:0.8.12-beta.2+mc1.21.1"
 
     // Lithium for NeoForge (0.15.1 - latest for MC 1.21.1)
     implementation("maven.modrinth:lithium:mc1.21.1-0.15.1-neoforge")

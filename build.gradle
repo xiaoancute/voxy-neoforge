@@ -23,9 +23,6 @@ sourceSets {
             exclude 'me/cortex/voxy/client/core/util/IrisUtil.java'
             exclude 'me/cortex/voxy/client/mixin/iris/**'
 
-            // Sodium config API (changed in Sodium 0.6.x)
-            exclude 'me/cortex/voxy/client/config/SodiumConfigBuilder.java'
-            exclude 'me/cortex/voxy/client/config/VoxyConfigMenu.java'
             exclude 'me/cortex/voxy/client/config/IConfigPageSetter.java'
 
             // ModMenu integration (Fabric-only)
@@ -180,18 +177,11 @@ dependencies {
     // Forgified Fabric API for compatibility (includes Fabric Loader API)
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${project.forgified_fabric_version}"
 
-    // Sodium for NeoForge (0.6.13 - latest for MC 1.21.1)
-    implementation "maven.modrinth:sodium:mc1.21.1-0.6.13-neoforge"
+    // Sodium 0.8 backport for NeoForge 1.21.1
+    implementation "maven.modrinth:sodium:mc1.21.1-0.8.12-beta.2-neoforge"
 
     // Lithium for NeoForge (0.15.1 - latest for MC 1.21.1)
     implementation("maven.modrinth:lithium:mc1.21.1-0.15.1-neoforge")
-
-    // SodiumOptionsAPI for Video Settings integration
-    // Provides event API to add custom pages to Sodium's options GUI
-    compileOnly("maven.modrinth:sodium-options-api:neoforge-1.21.1-1.0.10")
-
-    // Reese's Sodium Options - required by SodiumOptionsAPI
-    compileOnly("maven.modrinth:reeses-sodium-options:mc1.21.3-1.8.0+neoforge")
 
     // Optional mod dependencies - commented out for initial port
     // TODO: Add NeoForge versions when available

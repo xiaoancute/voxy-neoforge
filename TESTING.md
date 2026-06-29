@@ -42,10 +42,10 @@ In the Java settings, add these JVM arguments for better performance:
 
 ### 2.1 Download Sodium for NeoForge
 
-Voxy requires **Sodium 0.6.9 or later** for NeoForge 1.21.1:
+Voxy requires **Sodium 0.8.12-beta.2 or later** for NeoForge 1.21.1:
 
 1. Go to [Modrinth Sodium page](https://modrinth.com/mod/sodium) or [CurseForge Sodium page](https://www.curseforge.com/minecraft/mc-mods/sodium)
-2. Download the **NeoForge 1.21.1** compatible version (0.6.9+)
+2. Download the **NeoForge 1.21.1** compatible version (0.8.12-beta.2+)
 3. **Important:** Ensure you download the **NeoForge** version, NOT the Fabric version
 
 ### 2.2 Install Sodium
@@ -83,7 +83,7 @@ build/libs/voxy-0.2.9-alpha.jar
 ### 3.3 Verify Dependencies
 
 Ensure the following mods are installed and enabled:
-- ✅ **Sodium** (0.6.9+)
+- ✅ **Sodium** (0.8.12-beta.2+)
 - ✅ **Voxy** (0.2.9-alpha)
 
 ## Step 4: Launch Configuration

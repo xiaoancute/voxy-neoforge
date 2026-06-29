@@ -47,7 +47,7 @@ You might wonder: "Why not just use the Fabric version with [Sinytra Connector](
 - Delayed chunk unloading to prevent pop-out effects
 
 ### Current Limitations
-- Requires Sodium 0.6.13+ (NeoForge version)
+- Requires Sodium 0.8.12-beta.2+ (NeoForge 1.21.1 backport)
 - Some optional integrations not yet ported (Iris, Nvidium, Vivecraft)
 - Debug screen integration disabled (MC 1.21.1 API changes)
 
@@ -59,14 +59,13 @@ You might wonder: "Why not just use the Fabric version with [Sinytra Connector](
 |------------|---------|------|
 | Minecraft | 1.21.1 | - |
 | NeoForge | 21.1.x | [NeoForge](https://neoforged.net/) |
-| Sodium | mc1.21.1-0.6.13-neoforge | [Modrinth](https://modrinth.com/mod/sodium/version/mc1.21.1-0.6.13-neoforge) |
+| Sodium | mc1.21.1-0.8.12-beta.2-neoforge | [Modrinth](https://modrinth.com/mod/sodium/version/mc1.21.1-0.8.12-beta.2-neoforge) |
 | Forgified Fabric API | 0.116.7+2.2.0+1.21.1 | [Modrinth](https://modrinth.com/mod/forgified-fabric-api/version/0.116.7+2.2.0+1.21.1) |
 
 ### Recommended Dependencies
 
 | Dependency | Purpose | Link |
 |------------|---------|------|
-| Reese's Sodium Options | Better settings UI for Sodium + Voxy config access | [Modrinth](https://modrinth.com/mod/reeses-sodium-options) |
 | Lithium | General performance improvements | [Modrinth](https://modrinth.com/mod/lithium) |
 
 ## Installation
@@ -81,7 +80,7 @@ You might wonder: "Why not just use the Fabric version with [Sinytra Connector](
 ## Building from Source
 
 ```bash
-git clone https://github.com/j-shelfwood/voxy-neoforge.git
+git clone https://github.com/xiaoancute/voxy-neoforge.git
 cd voxy-neoforge
 ./gradlew build
 ```
@@ -99,5 +98,5 @@ The `scripts/` directory contains build validation tools used in CI.
 ## Links
 
 - **Original Voxy:** [github.com/MCRcortex/voxy](https://github.com/MCRcortex/voxy)
-- **This Port:** [github.com/j-shelfwood/voxy-neoforge](https://github.com/j-shelfwood/voxy-neoforge)
+- **This Port:** [github.com/xiaoancute/voxy-neoforge](https://github.com/xiaoancute/voxy-neoforge)
 - **Sinytra Connector (alternative):** [github.com/Sinytra/Connector](https://github.com/Sinytra/Connector)

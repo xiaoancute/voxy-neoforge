@@ -1,6 +1,5 @@
 package me.cortex.voxy.client.config;
 
-import me.cortex.voxy.common.util.Pair;
 import net.caffeinemc.mods.sodium.api.config.ConfigState;
 import net.caffeinemc.mods.sodium.api.config.StorageEventHandler;
 import net.caffeinemc.mods.sodium.api.config.option.*;
@@ -15,7 +14,7 @@ import java.util.function.*;
 
 public class SodiumConfigBuilder {
 
-    private static record Enabler(Predicate<ConfigState> tester, Identifier[] dependencies) {
+    private static record Enabler(Predicate<ConfigState> tester, ResourceLocation[] dependencies) {
         public Enabler(Predicate<ConfigState> tester, String[] dependencies) {
             this(tester, mapIds(dependencies));
         }
@@ -143,8 +142,8 @@ public class SodiumConfigBuilder {
 
 
         protected Consumer<TYPE> postRunner;
-        protected Identifier[] postRunnerConflicts;
-        protected Identifier[] postChangeFlags;
+        protected ResourceLocation[] postRunnerConflicts;
+        protected ResourceLocation[] postChangeFlags;
         public OPTION setPostChangeRunner(Consumer<TYPE> postRunner, String... dontRunIfChangedVars) {
             this.postRunner = postRunner;
             this.postRunnerConflicts = mapIds(dontRunIfChangedVars);
@@ -163,7 +162,7 @@ public class SodiumConfigBuilder {
             option.setName(this.name);
             option.setTooltip(this.tooltip);
 
-            Set<Identifier> flags = new LinkedHashSet<>();
+            Set<ResourceLocation> flags = new LinkedHashSet<>();
             if (this.postRunner != null) {
                 var id = ResourceLocation.parse(this.id);
                 var runner = this.postRunner;
@@ -177,7 +176,7 @@ public class SodiumConfigBuilder {
             }
 
             if (!flags.isEmpty()) {
-                option.setFlags(flags.toArray(Identifier[]::new));
+                option.setFlags(flags.toArray(ResourceLocation[]::new));
             }
 
             option.setBinding(this.setter, this.getter);
@@ -255,20 +254,20 @@ public class SodiumConfigBuilder {
         return arr;
     }
 
-    private static Identifier[] mapIds(String[] strings) {
-        return map(strings, Identifier::parse, Identifier[]::new);
+    private static ResourceLocation[] mapIds(String[] strings) {
+        return map(strings, ResourceLocation::parse, ResourceLocation[]::new);
     }
 
 
     public static class PostApplyOps implements FlagHook {
-        private record Hook(Identifier name, Runnable runnable, Set<Identifier> conflicts) {}
-        private Map<Identifier, Hook> hooks = new LinkedHashMap<>();
+        private record Hook(ResourceLocation name, Runnable runnable, Set<ResourceLocation> conflicts) {}
+        private Map<ResourceLocation, Hook> hooks = new LinkedHashMap<>();
 
         public PostApplyOps register(String name, Runnable postRunner, String... conflicts) {
             return this.register(ResourceLocation.parse(name), postRunner, mapIds(conflicts));
         }
 
-        public PostApplyOps register(Identifier name, Runnable postRunner, Identifier... conflicts) {
+        public PostApplyOps register(ResourceLocation name, Runnable postRunner, ResourceLocation... conflicts) {
             this.hooks.put(name, new Hook(name, postRunner, new LinkedHashSet<>(List.of(conflicts))));
             return this;
         }
@@ -291,12 +290,12 @@ public class SodiumConfigBuilder {
         }
 
         @Override
-        public Collection<Identifier> getTriggers() {
+        public Collection<ResourceLocation> getTriggers() {
             return this.hooks.keySet();
         }
 
         @Override
-        public void accept(Collection<Identifier> identifiers, ConfigState configState) {
+        public void accept(Collection<ResourceLocation> identifiers, ConfigState configState) {
             for (var id : identifiers) {
                 var hook = this.hooks.get(id);
                 if (hook != null) {

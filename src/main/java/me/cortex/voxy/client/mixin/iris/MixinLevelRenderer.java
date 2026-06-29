@@ -5,7 +5,6 @@ import com.mojang.blaze3d.resource.GraphicsResourceAllocator;
 import me.cortex.voxy.client.core.IGetVoxyRenderSystem;
 import me.cortex.voxy.client.core.util.IrisUtil;
 import net.caffeinemc.mods.sodium.client.render.chunk.ChunkRenderMatrices;
-import net.caffeinemc.mods.sodium.client.util.FogStorage;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -45,7 +44,7 @@ public class MixinLevelRenderer {
                 glViewport(0,0,Minecraft.getInstance().getMainRenderTarget().width, Minecraft.getInstance().getMainRenderTarget().height);
 
                 var pos = camera.position();
-                IrisUtil.CAPTURED_VIEWPORT_PARAMETERS = new IrisUtil.CapturedViewportParameters(new ChunkRenderMatrices(projectionMatrix, positionMatrix), ((FogStorage) this.minecraft.gameRenderer).sodium$getFogParameters(), pos.x, pos.y, pos.z);
+                IrisUtil.CAPTURED_VIEWPORT_PARAMETERS = new IrisUtil.CapturedViewportParameters(new ChunkRenderMatrices(projectionMatrix, positionMatrix), pos.x, pos.y, pos.z);
             }
         }
     }

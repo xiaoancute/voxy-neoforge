@@ -1,7 +1,7 @@
 package me.cortex.voxy.client.core.rendering;
 
-// MC 1.21.1 NeoForge: Iris/Vivecraft integrations excluded - not available on NeoForge
-// import me.cortex.voxy.client.core.util.IrisUtil;
+import me.cortex.voxy.client.core.util.IrisUtil;
+// MC 1.21.1 NeoForge: Vivecraft integration remains disabled.
 // import net.fabricmc.loader.api.FabricLoader;
 // import org.vivecraft.api.client.VRRenderingAPI;
 // import static org.vivecraft.api.client.data.RenderPass.VANILLA;
@@ -39,10 +39,15 @@ public class ViewportSelector <T extends Viewport<?>> {
 
     private static final Object IRIS_SHADOW_OBJECT = new Object();
     public T getViewport() {
-        // MC 1.21.1 NeoForge: Simplified viewport selection
-        // Vivecraft and Iris integrations disabled - return default viewport
-        // TODO: Re-enable Iris shadow viewport when Oculus (NeoForge Iris port) support added
-        return this.defaultViewport;
+        T viewport = null;
+        if (viewport == null && IrisUtil.irisShadowActive()) {
+            viewport = this.getOrCreate(IRIS_SHADOW_OBJECT);
+        }
+
+        if (viewport == null) {
+            viewport = this.defaultViewport;
+        }
+        return viewport;
     }
 
     public void free() {

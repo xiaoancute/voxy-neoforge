@@ -43,4 +43,7 @@ side="BOTH"
 config="client.voxy.mixins.json"
 
 [[mixins]]
+config="iris.voxy.mixins.json"
+
+[[mixins]]
 config="common.voxy.mixins.json"

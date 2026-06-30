@@ -187,6 +187,7 @@ dependencies {
     // Sodium 0.8 backport for NeoForge 1.21.1
     implementation "net.caffeinemc:sodium-neoforge:0.8.12-beta.2+mc1.21.1"
     compileOnly "net.caffeinemc:sodium-neoforge-mod:0.8.12-beta.2+mc1.21.1"
+    runtimeOnly "net.caffeinemc:sodium-neoforge-mod:0.8.12-beta.2+mc1.21.1"
 
     // Lithium for NeoForge (0.15.1 - latest for MC 1.21.1)
     implementation("maven.modrinth:lithium:mc1.21.1-0.15.1-neoforge")

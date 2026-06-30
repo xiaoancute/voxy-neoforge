@@ -158,7 +158,6 @@ neoForge {
         client {
             client()
             gameDirectory.set(layout.projectDirectory.dir("runs/client"))
-            runtimeOnly "net.caffeinemc:sodium-neoforge-mod:0.8.12-beta.2+mc1.21.1"
         }
     }
 
@@ -441,6 +440,7 @@ dependencies {
         version { strictly "[3.3.0,4.0.0)"; prefer "$lwjglVersion" }
     }
     // Add to runtime classpath for MC 1.21.1 (not needed for 1.21.9+)
+    additionalRuntimeClasspath "net.caffeinemc:sodium-neoforge-mod:0.8.12-beta.2+mc1.21.1"
     additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion"
     additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion"
     // Natives also need to be on runtime classpath (LWJGL extracts from classpath)

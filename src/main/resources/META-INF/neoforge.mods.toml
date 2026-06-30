@@ -16,14 +16,14 @@ modId="neoforge"
 type="required"
 versionRange="[21.1,)"
 ordering="NONE"
-side="BOTH"
+side="CLIENT"
 
 [[dependencies.voxy]]
 modId="minecraft"
 type="required"
 versionRange="[1.21.1]"
 ordering="NONE"
-side="BOTH"
+side="CLIENT"
 
 [[dependencies.voxy]]
 modId="sodium"
@@ -37,7 +37,7 @@ modId="fabric_api"
 type="required"
 versionRange="[0.102.0,)"
 ordering="BEFORE"
-side="BOTH"
+side="CLIENT"
 
 [[mixins]]
 config="client.voxy.mixins.json"

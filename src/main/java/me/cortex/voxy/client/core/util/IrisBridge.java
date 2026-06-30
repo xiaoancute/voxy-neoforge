@@ -1,11 +1,11 @@
 package me.cortex.voxy.client.core.util;
 
 import me.cortex.voxy.client.core.AbstractRenderPipeline;
-import me.cortex.voxy.client.core.IrisVoxyRenderPipeline;
 import me.cortex.voxy.client.core.rendering.hierachical.AsyncNodeManager;
 import me.cortex.voxy.client.core.rendering.hierachical.HierarchicalOcclusionTraverser;
 import me.cortex.voxy.client.core.rendering.hierachical.NodeCleaner;
 import me.cortex.voxy.client.iris.IGetIrisVoxyPipelineData;
+import me.cortex.voxy.client.iris.IrisVoxyRenderPipeline;
 import me.cortex.voxy.common.Logger;
 import net.irisshaders.iris.Iris;
 import net.irisshaders.iris.api.v0.IrisApi;

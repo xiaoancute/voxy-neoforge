@@ -229,6 +229,18 @@ task validateMixinConfig(type: Exec) {
     }
 }
 
+// Validate that optional Iris API usage stays behind IrisBridge/Iris packages
+task validateOptionalIrisBoundary(type: Exec) {
+    description = 'Validates that optional Iris API references are isolated from general client code'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_optional_iris_boundary.py'
+
+    onlyIf {
+        file('scripts/validate_optional_iris_boundary.py').exists()
+    }
+}
+
 // Validate mixin target signatures before compilation
 task validateMixinSignatures(type: Exec) {
     description = 'Validates @Inject/@Shadow targets against Minecraft source'
@@ -263,6 +275,7 @@ task validateMixins(type: Exec) {
 
 // Run validations as part of build process
 compileJava.dependsOn validateMixinConfig       // Before compilation (config check)
+compileJava.dependsOn validateOptionalIrisBoundary // Before compilation (optional dependency boundary check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)
 build.dependsOn validateMixins                   // After JAR creation (content check)
 

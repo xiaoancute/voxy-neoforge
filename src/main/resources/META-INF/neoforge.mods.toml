@@ -11,6 +11,9 @@ description="Far distance rendering mod utilising LoDs"
 authors="Cortex"
 logoFile="assets/voxy/icon.png"
 
+[modproperties.voxy]
+"sodium:config_api_user"="me.cortex.voxy.client.config.VoxyConfigMenu"
+
 [[dependencies.voxy]]
 modId="neoforge"
 type="required"

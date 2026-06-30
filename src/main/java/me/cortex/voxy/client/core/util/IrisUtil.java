@@ -2,14 +2,14 @@ package me.cortex.voxy.client.core.util;
 
 import me.cortex.voxy.client.core.VoxyRenderSystem;
 import me.cortex.voxy.client.core.rendering.Viewport;
+import me.cortex.voxy.client.core.AbstractRenderPipeline;
+import me.cortex.voxy.client.core.rendering.hierachical.AsyncNodeManager;
+import me.cortex.voxy.client.core.rendering.hierachical.HierarchicalOcclusionTraverser;
+import me.cortex.voxy.client.core.rendering.hierachical.NodeCleaner;
 import net.caffeinemc.mods.sodium.client.render.chunk.ChunkRenderMatrices;
-import net.irisshaders.iris.Iris;
-import net.irisshaders.iris.api.v0.IrisApi;
-import net.irisshaders.iris.gl.IrisRenderSystem;
-import net.irisshaders.iris.shadows.ShadowRenderer;
 import net.neoforged.fml.ModList;
 
-import java.io.IOException;
+import java.util.function.BooleanSupplier;
 
 public class IrisUtil {
 
@@ -25,48 +25,28 @@ public class IrisUtil {
     public static final boolean SHADER_SUPPORT = true;//System.getProperty("voxy.enableExperimentalIrisPipeline", "false").equalsIgnoreCase("true");
 
 
-    private static boolean irisShadowActive0() {
-        return ShadowRenderer.ACTIVE;
-    }
-
     public static boolean irisShadowActive() {
-        return IRIS_INSTALLED && irisShadowActive0();
+        return IRIS_INSTALLED && IrisBridge.irisShadowActive();
     }
 
     public static void clearIrisSamplers() {
-        if (IRIS_INSTALLED) clearIrisSamplers0();
+        if (IRIS_INSTALLED) IrisBridge.clearIrisSamplers();
     }
     public static void reload() {
-        if (IRIS_INSTALLED) reload0();
-    }
-
-    private static void reload0() {
-        try {
-            if (IrisApi.getInstance().isShaderPackInUse()) {//Only reload if there is a shaderpack
-                Iris.reload();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void clearIrisSamplers0() {
-        for (int i = 0; i < 16; i++) {
-            IrisRenderSystem.bindSamplerToUnit(i, 0);
-        }
-    }
-
-    private static boolean irisShaderPackEnabled0() {
-        return Iris.isPackInUseQuick();
+        if (IRIS_INSTALLED) IrisBridge.reload();
     }
 
     public static boolean irisShaderPackEnabled() {
-        return IRIS_INSTALLED && irisShaderPackEnabled0();
+        return IRIS_INSTALLED && IrisBridge.irisShaderPackEnabled();
     }
     public static void disableIrisShaders() {
-        if(IRIS_INSTALLED) disableIrisShaders0();
+        if (IRIS_INSTALLED) IrisBridge.disableIrisShaders();
     }
-    private static void disableIrisShaders0() {
-        IrisApi.getInstance().getConfig().setShadersEnabledAndApply(false);//Disable shaders
+
+    public static AbstractRenderPipeline createPipeline(AsyncNodeManager nodeManager, NodeCleaner nodeCleaner, HierarchicalOcclusionTraverser traversal, BooleanSupplier frexSupplier) {
+        if (IRIS_INSTALLED && SHADER_SUPPORT) {
+            return IrisBridge.createPipeline(nodeManager, nodeCleaner, traversal, frexSupplier);
+        }
+        return null;
     }
 }

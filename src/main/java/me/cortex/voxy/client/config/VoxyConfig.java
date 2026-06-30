@@ -46,7 +46,7 @@ public class VoxyConfig {
     public int earthCurveRatio = 0;
 
     private static VoxyConfig loadOrCreate() {
-        if (VoxyCommon.isAvailable()) {
+        if (VoxyCommon.IS_IN_MINECRAFT && !VoxyCommon.IS_DEDICATED_SERVER) {
             var path = getConfigPath();
             if (Files.exists(path)) {
                 try (FileReader reader = new FileReader(path.toFile())) {

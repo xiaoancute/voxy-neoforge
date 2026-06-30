@@ -153,6 +153,19 @@ neoForge {
         minecraftVersion = project.minecraft_version
         mappingsVersion = "2024.11.17"
     }
+
+    runs {
+        client {
+            client()
+            gameDirectory.set(layout.projectDirectory.dir("runs/client"))
+        }
+    }
+
+    mods {
+        voxy {
+            sourceSet sourceSets.main
+        }
+    }
 }
 
 def modRuntimeOnlyMsk = {arg->}

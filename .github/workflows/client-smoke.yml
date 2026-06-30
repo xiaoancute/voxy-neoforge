@@ -1,0 +1,47 @@
+name: Client Smoke
+
+on:
+  workflow_dispatch:
+
+jobs:
+  client-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install headless OpenGL packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb mesa-utils libgl1-mesa-dri libglx-mesa0
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run client smoke test
+        run: bash scripts/ci_client_smoke.sh
+        env:
+          GITHUB_ACTIONS: true
+          VOXY_CLIENT_SMOKE_TIMEOUT: 240
+
+      - name: Upload smoke logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-smoke-logs
+          path: |
+            build/client-smoke/**
+            run/logs/**
+            run/crash-reports/**
+          retention-days: 7

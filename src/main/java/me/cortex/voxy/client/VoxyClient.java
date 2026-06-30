@@ -55,6 +55,7 @@ public class VoxyClient {
         } else {
             Logger.error("Voxy is unsupported on your system.");
         }
+        Logger.info("Voxy client initialization completed");
     }
 
     /**

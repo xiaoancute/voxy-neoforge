@@ -3,8 +3,8 @@
   "package": "me.cortex.voxy.client.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "iris.CustomUniformsAccessor",
-    "iris.IrisRenderingPipelineAccessor",
+    "iris.AccessorCustomUniforms",
+    "iris.AccessorIrisRenderingPipeline",
     "iris.MixinIris",
     "iris.MixinIrisRenderingPipeline",
     "iris.MixinIrisSamplers",

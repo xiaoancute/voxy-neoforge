@@ -55,6 +55,9 @@ class MixinConfigValidator:
         with open('src/main/resources/client.voxy.mixins.json') as f:
             client_config = json.load(f)
             client_mixins = set(client_config.get('client', []))
+        with open('src/main/resources/iris.voxy.mixins.json') as f:
+            iris_config = json.load(f)
+            client_mixins.update(iris_config.get('client', []))
         
         with open('src/main/resources/common.voxy.mixins.json') as f:
             common_config = json.load(f)
@@ -140,8 +143,11 @@ class MixinConfigValidator:
                 
                 mixin_annotation = mixin_match.group(1)
                 
-                # Check if targeting non-Minecraft class
-                has_remap_false = 'remap' in content and 'false' in mixin_annotation
+                # Check if targeting non-Minecraft class or method
+                has_remap_false = (
+                    re.search(r'@Mixin\([^)]*remap\s*=\s*false', content) or
+                    re.search(r'@(?:Inject|Redirect|Modify[A-Za-z]*|WrapOperation)\([^)]*remap\s*=\s*false', content)
+                )
                 
                 # RenderSystem, Sodium, Nvidium classes should have remap=false
                 if 'RenderSystem.class' in mixin_annotation:
@@ -169,6 +175,7 @@ class MixinConfigValidator:
         
         json_files = [
             'src/main/resources/client.voxy.mixins.json',
+            'src/main/resources/iris.voxy.mixins.json',
             'src/main/resources/common.voxy.mixins.json'
         ]
         

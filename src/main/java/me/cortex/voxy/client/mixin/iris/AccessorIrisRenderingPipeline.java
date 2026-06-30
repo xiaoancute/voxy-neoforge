@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(value = IrisRenderingPipeline.class, remap = false)
-public interface IrisRenderingPipelineAccessor {
+public interface AccessorIrisRenderingPipeline {
     @Accessor
     RenderTargets getRenderTargets();
 }

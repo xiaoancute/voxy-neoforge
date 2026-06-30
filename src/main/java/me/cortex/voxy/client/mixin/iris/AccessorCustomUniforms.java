@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import java.util.Map;
 
 @Mixin(value = CustomUniforms.class, remap = false)
-public interface CustomUniformsAccessor {
+public interface AccessorCustomUniforms {
     @Accessor Map<Object, Object2IntMap<CachedUniform>> getLocationMap();
 }

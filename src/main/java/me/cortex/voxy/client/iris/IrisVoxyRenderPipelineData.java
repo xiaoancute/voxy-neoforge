@@ -7,8 +7,8 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectFunction;
 import kroppeb.stareval.function.FunctionReturn;
 import kroppeb.stareval.function.Type;
 import me.cortex.voxy.client.core.IrisVoxyRenderPipeline;
-import me.cortex.voxy.client.mixin.iris.CustomUniformsAccessor;
-import me.cortex.voxy.client.mixin.iris.IrisRenderingPipelineAccessor;
+import me.cortex.voxy.client.mixin.iris.AccessorCustomUniforms;
+import me.cortex.voxy.client.mixin.iris.AccessorIrisRenderingPipeline;
 import me.cortex.voxy.common.Logger;
 import net.irisshaders.iris.gl.buffer.ShaderStorageBufferHolder;
 import net.irisshaders.iris.gl.image.ImageHolder;
@@ -99,8 +99,8 @@ public class IrisVoxyRenderPipelineData {
 
         var ssboSet = createSSBOLayouts(patch.getSSBOs(), ssboHolder);
 
-        var opaqueDrawTargets = getDrawBuffers(patch.getOpqaueTargets(), ipipe.getFlippedAfterPrepare(), ((IrisRenderingPipelineAccessor)ipipe).getRenderTargets());
-        var translucentDrawTargets = getDrawBuffers(patch.getTranslucentTargets(), ipipe.getFlippedAfterPrepare(), ((IrisRenderingPipelineAccessor)ipipe).getRenderTargets());
+        var opaqueDrawTargets = getDrawBuffers(patch.getOpqaueTargets(), ipipe.getFlippedAfterPrepare(), ((AccessorIrisRenderingPipeline)ipipe).getRenderTargets());
+        var translucentDrawTargets = getDrawBuffers(patch.getTranslucentTargets(), ipipe.getFlippedAfterPrepare(), ((AccessorIrisRenderingPipeline)ipipe).getRenderTargets());
 
 
 
@@ -396,7 +396,7 @@ public class IrisVoxyRenderPipelineData {
         cu.mapholderToPass(uniformBuilder, patch);
 
         FunctionReturn cachedReturn = new FunctionReturn();
-        ((CustomUniformsAccessor)cu).getLocationMap().get(patch).object2IntEntrySet().forEach(entry-> {
+        ((AccessorCustomUniforms)cu).getLocationMap().get(patch).object2IntEntrySet().forEach(entry-> {
             if (!seenUniforms.add(entry.getKey().getName())) {
                 throw new IllegalArgumentException("Already added uniform: " + entry.getKey().getName());
             }

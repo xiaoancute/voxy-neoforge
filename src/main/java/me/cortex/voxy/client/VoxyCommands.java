@@ -1,11 +1,13 @@
 package me.cortex.voxy.client;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import me.cortex.voxy.client.core.IGetVoxyRenderSystem;
+import me.cortex.voxy.common.DebugUtils;
 import me.cortex.voxy.common.Logger;
 import me.cortex.voxy.commonImpl.VoxyCommon;
 import me.cortex.voxy.commonImpl.WorldIdentifier;
@@ -61,10 +63,17 @@ public class VoxyCommands {
                             .executes(VoxyCommands::importDistantHorizons)));
         }
 
+        var debug = Commands.literal("debug")
+                .then(Commands.literal("verifyTLNChildMask")
+                        .executes(ctx -> verifyTLNs(ctx, false))
+                        .then(Commands.argument("attemptRepair", BoolArgumentType.bool())
+                                .executes(ctx -> verifyTLNs(ctx, BoolArgumentType.getBool(ctx, "attemptRepair")))));
+
         return Commands.literal("voxy")//.requires((ctx)-> VoxyCommon.getInstance() != null)
                 .then(Commands.literal("reload")
                         .executes(VoxyCommands::reloadInstance))
-                .then(imports);
+                .then(imports)
+                .then(debug);
     }
 
     private static boolean hasDHImportLibraries() {
@@ -98,6 +107,24 @@ public class VoxyCommands {
 
         var r = Minecraft.getInstance().levelRenderer;
         if (r != null) r.allChanged();
+        return 0;
+    }
+
+    private static int verifyTLNs(CommandContext<CommandSourceStack> ctx, boolean attemptRepair) {
+        if (VoxyCommon.getInstance() == null) {
+            ctx.getSource().sendFailure(Component.translatable("Voxy must be enabled in settings to use this"));
+            return 1;
+        }
+        if (Minecraft.getInstance().level == null) {
+            ctx.getSource().sendFailure(Component.translatable("You must be in a world to use this"));
+            return 1;
+        }
+        var engine = WorldIdentifier.ofEngine(Minecraft.getInstance().level);
+        if (engine == null) {
+            ctx.getSource().sendFailure(Component.translatable("Voxy world engine is not available"));
+            return 1;
+        }
+        DebugUtils.verifyAllTopLevelNodes(engine, attemptRepair);
         return 0;
     }
 

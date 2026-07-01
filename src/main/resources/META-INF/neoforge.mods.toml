@@ -50,4 +50,8 @@ config="iris.voxy.mixins.json"
 requiredMods=["iris"]
 
 [[mixins]]
+config="sable.voxy.mixins.json"
+requiredMods=["sable"]
+
+[[mixins]]
 config="common.voxy.mixins.json"

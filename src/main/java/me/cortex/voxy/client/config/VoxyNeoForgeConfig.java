@@ -39,6 +39,11 @@ public class VoxyNeoForgeConfig {
                      "Example: 16 = 512 chunks render distance")
             .defineInRange("sectionRenderDistance", 16, 2, 64);
 
+    private static final ModConfigSpec.IntValue SIMULATED_CONTRAPTION_RENDER_DISTANCE_PERCENT = BUILDER
+            .comment("Sable/Create Aeronautics simulated contraption render distance as a percent of Voxy LOD distance",
+                     "0 = vanilla distance, 100 = full Voxy LOD distance")
+            .defineInRange("simulatedContraptionRenderDistancePercent", 50, 0, 100);
+
     private static final ModConfigSpec.IntValue SERVICE_THREADS = BUILDER
             .comment("Number of background threads for LOD processing",
                      "Default is based on CPU core count.")
@@ -101,6 +106,7 @@ public class VoxyNeoForgeConfig {
         VoxyConfig.CONFIG.enableRendering = ENABLE_RENDERING.get();
         VoxyConfig.CONFIG.ingestEnabled = INGEST_ENABLED.get();
         VoxyConfig.CONFIG.sectionRenderDistance = SECTION_RENDER_DISTANCE.get();
+        VoxyConfig.CONFIG.simulatedContraptionRenderDistancePercent = SIMULATED_CONTRAPTION_RENDER_DISTANCE_PERCENT.get();
         VoxyConfig.CONFIG.serviceThreads = SERVICE_THREADS.get();
         VoxyConfig.CONFIG.subDivisionSize = SUB_DIVISION_SIZE.get().floatValue();
         VoxyConfig.CONFIG.useEnvironmentalFog = USE_ENVIRONMENTAL_FOG.get();

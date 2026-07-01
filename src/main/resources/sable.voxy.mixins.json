@@ -1,0 +1,12 @@
+{
+  "required": false,
+  "package": "me.cortex.voxy.client.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "minecraft.MixinGameRendererSableRenderDistance",
+    "sable.MixinSableReacharoundCulling"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -10,7 +10,7 @@ case "$smoke_profile" in
     sodium)
         copy_task="copyClientSmokeMods"
         ;;
-    sodium-iris)
+    sodium-iris|sodium-iris-shaderpack)
         copy_task="copyClientSmokeIrisMods"
         ;;
     *)
@@ -18,6 +18,20 @@ case "$smoke_profile" in
         exit 2
         ;;
 esac
+
+shaderpack_name="voxy-ci-empty"
+shaderpack_marker=""
+if [[ "$smoke_profile" == "sodium-iris-shaderpack" ]]; then
+    shaderpack_marker="Using shaderpack: ${shaderpack_name}"
+fi
+
+markers_found() {
+    grep -q "$marker" "$log_file" || return 1
+
+    if [[ -n "$shaderpack_marker" ]]; then
+        grep -q "$shaderpack_marker" "$log_file" || return 1
+    fi
+}
 
 mkdir -p "$(dirname "$log_file")"
 rm -f "$log_file"
@@ -34,6 +48,21 @@ if ! ./gradlew "$copy_task" --console=plain >"$log_file" 2>&1; then
     exit 1
 fi
 
+if [[ "$smoke_profile" == "sodium-iris-shaderpack" ]]; then
+    echo "Preparing Iris smoke shaderpack" >>"$log_file"
+    mkdir -p "runs/client/shaderpacks/${shaderpack_name}/shaders"
+    mkdir -p "runs/client/config"
+    cat >"runs/client/config/iris.properties" <<EOF
+shaderPack=${shaderpack_name}
+enableShaders=true
+allowUnknownShaders=false
+enableDebugOptions=false
+disableUpdateMessage=true
+maxShadowRenderDistance=32
+colorSpace=SRGB
+EOF
+fi
+
 set +e
 xvfb-run -a ./gradlew runClient --console=plain >>"$log_file" 2>&1 &
 client_pid=$!
@@ -41,14 +70,14 @@ set -e
 
 deadline=$((SECONDS + timeout_seconds))
 while kill -0 "$client_pid" 2>/dev/null; do
-    if grep -q "$marker" "$log_file"; then
-        echo "Smoke marker found: ${marker}"
+    if markers_found; then
+        echo "Smoke markers found"
         kill "$client_pid" 2>/dev/null || true
         wait "$client_pid" 2>/dev/null || true
         exit 0
     fi
 
-    if grep -Eiq "(NoClassDefFoundError|Mixin apply failed|InvalidMixinException|Failed to start Minecraft|Crash report saved)" "$log_file"; then
+    if grep -Eiq "(NoClassDefFoundError|Mixin apply failed|InvalidMixinException|Failed to start Minecraft|Crash report saved|Failed to load the shaderpack|Could not load the shaderpack|Falling back to normal rendering without shaders)" "$log_file"; then
         echo "Client smoke test failed before marker"
         tail -200 "$log_file"
         kill "$client_pid" 2>/dev/null || true
@@ -72,8 +101,8 @@ wait "$client_pid"
 exit_code=$?
 set -e
 
-if grep -q "$marker" "$log_file"; then
-    echo "Smoke marker found: ${marker}"
+if markers_found; then
+    echo "Smoke markers found"
     exit 0
 fi
 

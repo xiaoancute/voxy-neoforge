@@ -14,6 +14,7 @@ jobs:
         smoke-profile:
           - sodium
           - sodium-iris
+          - sodium-iris-shaderpack
 
     steps:
       - name: Checkout sources

@@ -68,6 +68,7 @@ public class VoxyRenderSystem {
 
     private final RenderDistanceTracker renderDistanceTracker;
     public final ChunkBoundRenderer chunkBoundRenderer;
+    private long lastTelemetryLogTime;
 
     private final ViewportSelector<?> viewportSelector;
 
@@ -323,6 +324,7 @@ public class VoxyRenderSystem {
         }
 
         TimingStatistics.all.stop();
+        this.maybeLogRuntimeTelemetry(viewport);
 
         //TimingStatistics.I.start();
         //glFlush();
@@ -351,6 +353,23 @@ public class VoxyRenderSystem {
         this.postProcessing.renderPost(viewport, matrices.projection(), boundFB);
         TimingStatistics.F.stop();
          */
+    }
+
+    private void maybeLogRuntimeTelemetry(Viewport<?> viewport) {
+        long now = System.currentTimeMillis();
+        if (now - this.lastTelemetryLogTime < 5000) {
+            return;
+        }
+        this.lastTelemetryLogTime = now;
+        Logger.info("Voxy telemetry: viewport="
+                + viewport.width + "x" + viewport.height
+                + ",camera=" + (int) viewport.cameraX + "," + (int) viewport.cameraY + "," + (int) viewport.cameraZ
+                + ",chunkBounds=" + this.chunkBoundRenderer.getTrackedSectionCount()
+                + ",chunkPending=" + this.chunkBoundRenderer.getPendingAddCount() + "/" + this.chunkBoundRenderer.getPendingRemoveCount()
+                + ",topNodes=" + this.traversal.getTopNodeCount()
+                + ",lastRequests=" + this.traversal.getLastRequestCount()
+                + ",meshQueue=" + this.renderGen.getTaskCount()
+                + ",nodes={" + this.nodeManager.getDebugSummary() + "}");
     }
 
 

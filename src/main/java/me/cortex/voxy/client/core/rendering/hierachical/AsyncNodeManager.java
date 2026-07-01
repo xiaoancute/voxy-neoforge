@@ -760,6 +760,16 @@ public class AsyncNodeManager {
         //debug.add("GUQ/NRC: " + this.geometryUpdateQueue.size()+"/"+this.removeBatchQueue.size());
     }
 
+    public String getDebugSummary() {
+        return "work=" + this.workCounter.get()
+                + ",queues=req/" + this.requestBatchQueue.size()
+                + ",child/" + this.childUpdateQueue.size()
+                + ",geo/" + this.geometryUpdateQueue.size()
+                + ",rem/" + this.removeBatchQueue.size()
+                + ",usedMb=" + (this.getUsedGeometryCapacity()/(1<<20))
+                + ",manager={" + this.manager.getDebugSummary() + "}";
+    }
+
     public boolean hasWork() {
         return this.workCounter.get()!=0 || RESULT_HANDLE.get(this) != null;
     }

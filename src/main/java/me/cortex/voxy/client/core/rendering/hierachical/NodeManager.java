@@ -1422,6 +1422,16 @@ public class NodeManager {
         debug.add("NC/IF: " + this.activeSectionMap.size() + "/" + (this.singleRequests.count() + this.childRequests.count()));
     }
 
+    public String getDebugSummary() {
+        return "active=" + this.activeSectionMap.size()
+                + ",nodes=" + this.nodeData.getNodeCount()
+                + ",maxNode=" + this.nodeData.getEndNodeId()
+                + ",top=" + this.topLevelNodes.size()
+                + ",requests=" + (this.singleRequests.count() + this.childRequests.count())
+                + ",activeRequests=" + this.activeNodeRequestCount
+                + ",updates=" + this.nodeUpdates.size();
+    }
+
     public int getCurrentMaxNodeId() {
         return this.nodeData.getEndNodeId();
     }

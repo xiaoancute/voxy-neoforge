@@ -265,6 +265,22 @@ public class ChunkBoundRenderer {
         }
     }
 
+    public int getTrackedSectionCount() {
+        return this.chunk2idx.size();
+    }
+
+    public int getPendingAddCount() {
+        return this.addQueue.size();
+    }
+
+    public int getPendingRemoveCount() {
+        int count = this.remQueue.size();
+        for (LongArrayList queue : this.delayedRemovalQueue) {
+            count += queue.size();
+        }
+        return count;
+    }
+
     public void free() {
         this.rasterShader.free();
         this.uniformBuffer.free();

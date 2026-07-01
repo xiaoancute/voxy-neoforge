@@ -56,6 +56,7 @@ public class HierarchicalOcclusionTraverser {
     private final GlBuffer queueMetaBuffer = new GlBuffer(4*4*MAX_ITERATIONS).zero();
     private final GlBuffer scratchQueueA = new GlBuffer(MAX_QUEUE_SIZE*4).zero();
     private final GlBuffer scratchQueueB = new GlBuffer(MAX_QUEUE_SIZE*4).zero();
+    private int lastRequestCount;
 
     private static int BINDING_COUNTER = 1;
     private static final int SCENE_UNIFORM_BINDING = BINDING_COUNTER++;
@@ -345,6 +346,15 @@ public class HierarchicalOcclusionTraverser {
         if (count != 0) {
             this.nodeManager.submitRequestBatch(new MemoryBuffer(count*8L+8).cpyFrom(ptr-8));// the -8 is because we incremented it by 8
         }
+        this.lastRequestCount = count;
+    }
+
+    public int getTopNodeCount() {
+        return this.topNodeCount;
+    }
+
+    public int getLastRequestCount() {
+        return this.lastRequestCount;
     }
 
     public GlBuffer getNodeBuffer() {

@@ -279,6 +279,18 @@ task validateShaderVersions(type: Exec) {
     }
 }
 
+// Validate runtime telemetry hooks used for field debugging Voxy render issues
+task validateVoxyRuntimeTelemetry(type: Exec) {
+    description = 'Validates low-frequency Voxy runtime telemetry hooks'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_voxy_runtime_telemetry.py'
+
+    onlyIf {
+        file('scripts/validate_voxy_runtime_telemetry.py').exists()
+    }
+}
+
 // Validate mixin target signatures before compilation
 task validateMixinSignatures(type: Exec) {
     description = 'Validates @Inject/@Shadow targets against Minecraft source'
@@ -316,6 +328,7 @@ compileJava.dependsOn validateMixinConfig       // Before compilation (config ch
 compileJava.dependsOn validateOptionalIrisBoundary // Before compilation (optional dependency boundary check)
 compileJava.dependsOn validateOptionalDHBoundary // Before compilation (optional dependency boundary check)
 compileJava.dependsOn validateShaderVersions    // Before compilation (shader syntax/version check)
+compileJava.dependsOn validateVoxyRuntimeTelemetry // Before compilation (runtime diagnostic boundary check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)
 build.dependsOn validateMixins                   // After JAR creation (content check)
 

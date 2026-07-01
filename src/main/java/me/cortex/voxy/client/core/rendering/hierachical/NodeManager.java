@@ -1131,7 +1131,7 @@ public class NodeManager {
 
             //Check if the node is already in-flight, if it is, dont do any processing
             if (this.nodeData.isNodeRequestInFlight(nodeId)) {
-                Logger.warn("Tried processing a node that already has a request in flight: " + nodeId + " pos: " + WorldEngine.pprintPos(pos) + " ignoring");
+                // GPU traversal can resubmit during async CPU/GPU sync; the request is already tracked.
                 return;
             }
 

@@ -5,13 +5,17 @@ smoke_profile="${VOXY_CLIENT_SMOKE_PROFILE:-sodium}"
 timeout_seconds="${VOXY_CLIENT_SMOKE_TIMEOUT:-180}"
 log_file="${VOXY_CLIENT_SMOKE_LOG:-build/client-smoke/${smoke_profile}/runClient.log}"
 marker="Voxy client initialization completed"
+gradle_args=()
+min_sodium_version="$(sed -n 's/^sodium_compat_min_version=//p' gradle.properties)"
 
 case "$smoke_profile" in
     sodium-min)
-        copy_task="copyClientSmokeMinSodiumMods"
+        copy_task="copyClientSmokeMods"
+        gradle_args=(-Psodium_version="$min_sodium_version")
         ;;
     sodium-min-iris)
-        copy_task="copyClientSmokeMinSodiumIrisMods"
+        copy_task="copyClientSmokeIrisMods"
+        gradle_args=(-Psodium_version="$min_sodium_version")
         ;;
     sodium)
         copy_task="copyClientSmokeMods"
@@ -24,6 +28,11 @@ case "$smoke_profile" in
         exit 2
         ;;
 esac
+
+if [[ "${smoke_profile}" == sodium-min* && -z "$min_sodium_version" ]]; then
+    echo "Missing sodium_compat_min_version in gradle.properties"
+    exit 2
+fi
 
 shaderpack_name="voxy-ci-empty"
 shaderpack_marker=""
@@ -48,7 +57,7 @@ echo "Timeout: ${timeout_seconds}s"
 echo "Log: ${log_file}"
 
 echo "Installing smoke mod dependencies"
-if ! ./gradlew "$copy_task" --console=plain >"$log_file" 2>&1; then
+if ! ./gradlew "${gradle_args[@]}" "$copy_task" --console=plain >"$log_file" 2>&1; then
     echo "Failed to install smoke mod dependencies"
     tail -200 "$log_file"
     exit 1
@@ -70,7 +79,7 @@ EOF
 fi
 
 set +e
-xvfb-run -a ./gradlew runClient --console=plain >>"$log_file" 2>&1 &
+xvfb-run -a ./gradlew "${gradle_args[@]}" runClient --console=plain >>"$log_file" 2>&1 &
 client_pid=$!
 set -e
 

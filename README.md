@@ -37,7 +37,16 @@ You might wonder: "Why not just use the Fabric version with [Sinytra Connector](
 
 ## Status
 
-**Alpha** - Functional with known limitations.
+**Alpha** - usable on the tested NeoForge 1.21.1 client stack.
+
+### Tested Targets
+
+| Component | Version |
+|-----------|---------|
+| Minecraft | 1.21.1 |
+| NeoForge | 21.1.234 |
+| Sodium | 0.8.12-beta.2+mc1.21.1 |
+| Iris | 1.8.14-beta.1+1.21.1-neoforge |
 
 ### Working Features
 - LOD terrain rendering beyond vanilla render distance
@@ -45,11 +54,22 @@ You might wonder: "Why not just use the Fabric version with [Sinytra Connector](
 - Fog integration (disabled at LOD boundaries)
 - Block model baking for all render types (solid, cutout, cutout_mipped, translucent)
 - Delayed chunk unloading to prevent pop-out effects
+- Sodium 0.8.12 render hook compatibility
+- Iris shaderpack rendering path
+- Distant Horizons/XZ import dependencies are optional; they are not required to run Voxy
 
 ### Current Limitations
 - Requires Sodium 0.8.12-beta.2+ (NeoForge 1.21.1 backport)
-- Some optional integrations not yet ported (Iris, Nvidium, Vivecraft)
+- Iris shader shadows currently do not render Voxy LODs into the shadow map; this avoids crashes in the Iris shadow pass
+- Nvidium and Vivecraft integrations are not current targets for this port
 - Debug screen integration disabled (MC 1.21.1 API changes)
+- Modern UI is known to interfere with Voxy rendering on the tested modpack
+
+## Compatibility Notes
+
+- This is a client-side rendering mod. Do not install it on a dedicated server.
+- Tested with a large Create/Aeronautics/Sable client modpack, but compatibility is still best-effort.
+- If LODs stop rendering while cache files still grow, check for UI/rendering mods that hook the world render path first.
 
 ## Requirements
 
@@ -67,6 +87,7 @@ You might wonder: "Why not just use the Fabric version with [Sinytra Connector](
 | Dependency | Purpose | Link |
 |------------|---------|------|
 | Lithium | General performance improvements | [Modrinth](https://modrinth.com/mod/lithium) |
+| Iris | Shader support | [Modrinth](https://modrinth.com/mod/iris) |
 
 ## Installation
 

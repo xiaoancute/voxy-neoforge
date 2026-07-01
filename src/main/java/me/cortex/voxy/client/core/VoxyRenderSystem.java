@@ -24,6 +24,7 @@ import me.cortex.voxy.client.core.rendering.hierachical.NodeCleaner;
 import me.cortex.voxy.client.core.rendering.section.IUsesMeshlets;
 import me.cortex.voxy.client.core.rendering.section.backend.AbstractSectionRenderer;
 import me.cortex.voxy.client.core.rendering.section.backend.mdic.MDICSectionRenderer;
+import me.cortex.voxy.client.core.rendering.section.backend.mdic.MDICViewport;
 import me.cortex.voxy.client.core.rendering.section.geometry.BasicSectionGeometryData;
 import me.cortex.voxy.client.core.rendering.section.geometry.IGeometryData;
 import me.cortex.voxy.client.core.rendering.util.DownloadStream;
@@ -42,6 +43,7 @@ import net.minecraft.client.Minecraft;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -69,6 +71,11 @@ public class VoxyRenderSystem {
     private final RenderDistanceTracker renderDistanceTracker;
     public final ChunkBoundRenderer chunkBoundRenderer;
     private long lastTelemetryLogTime;
+    private int lastTelemetryRenderListSections = -1;
+    private int lastTelemetryCmdDispatchX = -1;
+    private int lastTelemetryOpaqueDraws = -1;
+    private int lastTelemetryTranslucentDraws = -1;
+    private int lastTelemetryTemporalDraws = -1;
 
     private final ViewportSelector<?> viewportSelector;
 
@@ -361,6 +368,7 @@ public class VoxyRenderSystem {
             return;
         }
         this.lastTelemetryLogTime = now;
+        this.downloadRuntimeTelemetry(viewport);
         Logger.info("Voxy telemetry: viewport="
                 + viewport.width + "x" + viewport.height
                 + ",camera=" + (int) viewport.cameraX + "," + (int) viewport.cameraY + "," + (int) viewport.cameraZ
@@ -368,8 +376,25 @@ public class VoxyRenderSystem {
                 + ",chunkPending=" + this.chunkBoundRenderer.getPendingAddCount() + "/" + this.chunkBoundRenderer.getPendingRemoveCount()
                 + ",topNodes=" + this.traversal.getTopNodeCount()
                 + ",lastRequests=" + this.traversal.getLastRequestCount()
+                + ",renderListSections=" + this.lastTelemetryRenderListSections
+                + ",draws=" + this.lastTelemetryOpaqueDraws + "/" + this.lastTelemetryTranslucentDraws + "/" + this.lastTelemetryTemporalDraws
+                + ",cmdDispatchX=" + this.lastTelemetryCmdDispatchX
                 + ",meshQueue=" + this.renderGen.getTaskCount()
                 + ",nodes={" + this.nodeManager.getDebugSummary() + "}");
+    }
+
+    private void downloadRuntimeTelemetry(Viewport<?> viewport) {
+        DownloadStream.INSTANCE.download(viewport.getRenderList(), 0, 4L, (ptr, size) ->
+                this.lastTelemetryRenderListSections = MemoryUtil.memGetInt(ptr));
+
+        if (viewport instanceof MDICViewport mdicViewport) {
+            DownloadStream.INSTANCE.download(mdicViewport.drawCountCallBuffer, 0, 24L, (ptr, size) -> {
+                this.lastTelemetryCmdDispatchX = MemoryUtil.memGetInt(ptr);
+                this.lastTelemetryOpaqueDraws = MemoryUtil.memGetInt(ptr + 12);
+                this.lastTelemetryTranslucentDraws = MemoryUtil.memGetInt(ptr + 16);
+                this.lastTelemetryTemporalDraws = MemoryUtil.memGetInt(ptr + 20);
+            });
+        }
     }
 
 

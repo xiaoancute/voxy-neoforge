@@ -9,6 +9,9 @@ CHECKS = {
         "maybeLogRuntimeTelemetry",
         "Voxy telemetry:",
         "chunkBoundRenderer.getTrackedSectionCount()",
+        "downloadRuntimeTelemetry",
+        "renderListSections",
+        "draws=",
         "nodeManager.getDebugSummary()",
     ],
     "src/main/java/me/cortex/voxy/client/core/rendering/ChunkBoundRenderer.java": [

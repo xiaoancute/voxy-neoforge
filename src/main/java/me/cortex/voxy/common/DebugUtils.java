@@ -12,7 +12,7 @@ public class DebugUtils {
             engine.acquireRef();
             try {
                 Logger.info("Verifying top level node masks, start");
-                Logger.showInHUD("Starting tln child verification" + (attemptRepair ? " attempting repairs on error" : ""));
+                Logger.info("Starting tln child verification" + (attemptRepair ? " attempting repairs on error" : ""));
                 LongArrayFIFOQueue positions = new LongArrayFIFOQueue();
                 engine.storage.iterateStoredSectionPositions(pos -> {
                     if (WorldEngine.getLevel(pos) == WorldEngine.MAX_LOD_LAYER) {
@@ -30,7 +30,6 @@ public class DebugUtils {
                     Logger.info("Verification aborted due to shutdown");
                 } else {
                     Logger.info("Verification complete");
-                    Logger.showInHUD("Verification complete");
                 }
             } finally {
                 engine.releaseRef();

@@ -255,6 +255,18 @@ task validateOptionalIrisBoundary(type: Exec) {
     }
 }
 
+// Validate GLSL versions against syntax used by packaged shaders
+task validateShaderVersions(type: Exec) {
+    description = 'Validates shader #version declarations against GLSL features in use'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_shader_versions.py'
+
+    onlyIf {
+        file('scripts/validate_shader_versions.py').exists()
+    }
+}
+
 // Validate mixin target signatures before compilation
 task validateMixinSignatures(type: Exec) {
     description = 'Validates @Inject/@Shadow targets against Minecraft source'
@@ -290,6 +302,7 @@ task validateMixins(type: Exec) {
 // Run validations as part of build process
 compileJava.dependsOn validateMixinConfig       // Before compilation (config check)
 compileJava.dependsOn validateOptionalIrisBoundary // Before compilation (optional dependency boundary check)
+compileJava.dependsOn validateShaderVersions    // Before compilation (shader syntax/version check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)
 build.dependsOn validateMixins                   // After JAR creation (content check)
 

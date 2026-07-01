@@ -231,6 +231,9 @@ public class VoxyRenderSystem {
         if (viewport == null) {
             return;
         }
+        if (viewport.width <= 0 || viewport.height <= 0) {
+            return;
+        }
 
         // MC 1.21.1 NeoForge: Fog is handled by VoxyClientEvents.onRenderFog()
         // which listens to ViewportEvent.RenderFog and pushes fog to infinity

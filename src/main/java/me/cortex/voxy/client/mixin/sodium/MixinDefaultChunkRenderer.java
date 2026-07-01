@@ -49,6 +49,9 @@ public abstract class MixinDefaultChunkRenderer extends ShaderChunkRenderer {
         if (renderPass == DefaultTerrainRenderPasses.CUTOUT) {
             var renderer = ((IGetVoxyRenderSystem) Minecraft.getInstance().levelRenderer).getVoxyRenderSystem();
             if (renderer != null) {
+                if (IrisUtil.irisShadowActive()) {
+                    return;
+                }
                 Viewport<?> viewport = null;
                 if (IrisUtil.irisShaderPackEnabled()) {
                     viewport = renderer.getViewport();

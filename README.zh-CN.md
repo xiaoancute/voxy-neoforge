@@ -35,9 +35,6 @@ Alpha，但在当前测试栈上可以正常使用。
 - 超出原版视距的 LOD 远景地形渲染
 - Sodium 0.8.12 渲染挂钩
 - Iris 光影包渲染路径
-- 雾效边界处理
-- solid、cutout、cutout_mipped、translucent 方块模型烘焙
-- Distant Horizons/XZ 导入相关依赖为可选依赖，不安装也能运行 Voxy
 
 ## 已知兼容性
 
@@ -78,4 +75,3 @@ cd voxy-neoforge
 ## 链接
 
 - 原版 Voxy: [github.com/MCRcortex/voxy](https://github.com/MCRcortex/voxy)
-- 本移植版: [github.com/xiaoancute/voxy-neoforge](https://github.com/xiaoancute/voxy-neoforge)

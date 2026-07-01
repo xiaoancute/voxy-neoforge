@@ -12,6 +12,20 @@
 # Agent orchestration task files
 /.agent/
 
+# Local agent workspace files
+/.cache/
+/.vscode/
+/artifacts/
+/error_log/
+/agent.md
+/findings.md
+/progress.md
+/task_plan.md
+/main_instance_mod_catalog.md
+/scripts/__pycache__/
+/scripts/catalog_modrinth_mods.py
+/*.zip
+
 # Local deployment scripts (contain SSH config)
 /scripts/deploy.sh
 /scripts/build_and_deploy.sh

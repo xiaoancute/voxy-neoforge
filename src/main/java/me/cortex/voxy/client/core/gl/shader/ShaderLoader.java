@@ -27,15 +27,7 @@ public class ShaderLoader {
     private static final Pattern IMPORT_PATTERN = Pattern.compile("#import <(?<namespace>.*):(?<path>.*)>");
 
     /**
-     * Parse and load a shader, matching upstream Voxy behavior.
-     *
-     * Upstream code:
-     *   return "#version 460 core\n" + ShaderParser.parseShader(
-     *       "\n#import <" + id + ">\n//beans", ShaderConstants.builder().build()
-     *   ).src().replaceAll("\r\n", "\n").replaceFirst("\n#version .+\n", "\n");
-     *
-     * The key is the leading "\n" before #import - this ensures the regex
-     * "\n#version .+\n" can match the #version directive in the loaded shader.
+     * Parse and load a shader while preserving the shader's own #version.
      */
     public static String parse(String id) {
         // Load shader source using Voxy's classloader (NeoForge classloader isolation fix)
@@ -44,19 +36,10 @@ public class ShaderLoader {
         // Process any nested #import directives recursively
         shaderSource = processImports(shaderSource);
 
-        // Match upstream format: "\n" + content + "\n//beans"
-        // The leading \n is critical for the regex to work
-        String processed = "\n" + shaderSource + "\n//beans";
-
         // Apply Sodium's shader constants processing (handles #define etc.)
-        processed = ShaderParser.parseShader(processed, ShaderConstants.builder().build()).src();
+        String processed = ShaderParser.parseShader(shaderSource, ShaderConstants.builder().build()).src();
 
-        // Normalize line endings and strip original #version (upstream behavior)
-        processed = processed.replaceAll("\r\n", "\n");
-        processed = processed.replaceFirst("\n#version .+\n", "\n");
-
-        // Prepend our target GLSL version
-        return "#version 460 core\n" + processed;
+        return processed.replaceAll("\r\n", "\n").stripLeading();
     }
 
     /**

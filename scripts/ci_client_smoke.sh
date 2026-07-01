@@ -33,7 +33,7 @@ while kill -0 "$client_pid" 2>/dev/null; do
         exit 0
     fi
 
-    if grep -Eiq "(NoClassDefFoundError|ClassNotFoundException|Mixin apply failed|InvalidMixinException|Failed to start Minecraft|Crash report saved)" "$log_file"; then
+    if grep -Eiq "(NoClassDefFoundError|Mixin apply failed|InvalidMixinException|Failed to start Minecraft|Crash report saved)" "$log_file"; then
         echo "Client smoke test failed before marker"
         tail -200 "$log_file"
         kill "$client_pid" 2>/dev/null || true

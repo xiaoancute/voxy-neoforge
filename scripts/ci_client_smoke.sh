@@ -12,8 +12,15 @@ echo "Starting NeoForge client smoke test"
 echo "Timeout: ${timeout_seconds}s"
 echo "Log: ${log_file}"
 
+echo "Installing smoke mod dependencies"
+if ! ./gradlew copyClientSmokeMods --console=plain >"$log_file" 2>&1; then
+    echo "Failed to install smoke mod dependencies"
+    tail -200 "$log_file"
+    exit 1
+fi
+
 set +e
-xvfb-run -a ./gradlew runClient --console=plain >"$log_file" 2>&1 &
+xvfb-run -a ./gradlew runClient --console=plain >>"$log_file" 2>&1 &
 client_pid=$!
 set -e
 

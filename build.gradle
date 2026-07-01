@@ -359,6 +359,11 @@ repositories {
 // Configuration to download LWJGL natives for repackaging
 configurations {
     lwjglNativesRaw
+    clientSmokeMods {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
 }
 
 dependencies {
@@ -367,6 +372,8 @@ dependencies {
     lwjglNativesRaw "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-windows"
     lwjglNativesRaw "org.lwjgl:lwjgl-lmdb:$lwjglVersion:natives-linux"
     lwjglNativesRaw "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-linux"
+
+    clientSmokeMods "net.caffeinemc:sodium-neoforge:0.8.12-beta.2+mc1.21.1"
 }
 
 // Task to extract LWJGL native binaries (DLLs/SOs) from native JARs
@@ -411,6 +418,14 @@ tasks.register('extractLwjglNatives') {
     }
 }
 
+tasks.register('copyClientSmokeMods', Copy) {
+    description = 'Copies mod jars required by the client smoke run'
+    group = 'verification'
+
+    from configurations.clientSmokeMods
+    into layout.projectDirectory.dir("runs/client/mods")
+}
+
 // Include extracted natives in the mod JAR root
 // LWJGL will find them there when the mod JAR is on the classpath
 tasks.named('jar') {
@@ -440,7 +455,6 @@ dependencies {
         version { strictly "[3.3.0,4.0.0)"; prefer "$lwjglVersion" }
     }
     // Add to runtime classpath for MC 1.21.1 (not needed for 1.21.9+)
-    additionalRuntimeClasspath "net.caffeinemc:sodium-neoforge-mod:0.8.12-beta.2+mc1.21.1"
     additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion"
     additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion"
     // Natives also need to be on runtime classpath (LWJGL extracts from classpath)

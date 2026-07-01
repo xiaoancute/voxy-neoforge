@@ -1,19 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+smoke_profile="${VOXY_CLIENT_SMOKE_PROFILE:-sodium}"
 timeout_seconds="${VOXY_CLIENT_SMOKE_TIMEOUT:-180}"
-log_file="${VOXY_CLIENT_SMOKE_LOG:-build/client-smoke/runClient.log}"
+log_file="${VOXY_CLIENT_SMOKE_LOG:-build/client-smoke/${smoke_profile}/runClient.log}"
 marker="Voxy client initialization completed"
+
+case "$smoke_profile" in
+    sodium)
+        copy_task="copyClientSmokeMods"
+        ;;
+    sodium-iris)
+        copy_task="copyClientSmokeIrisMods"
+        ;;
+    *)
+        echo "Unknown VOXY_CLIENT_SMOKE_PROFILE: ${smoke_profile}"
+        exit 2
+        ;;
+esac
 
 mkdir -p "$(dirname "$log_file")"
 rm -f "$log_file"
 
 echo "Starting NeoForge client smoke test"
+echo "Profile: ${smoke_profile}"
 echo "Timeout: ${timeout_seconds}s"
 echo "Log: ${log_file}"
 
 echo "Installing smoke mod dependencies"
-if ! ./gradlew copyClientSmokeMods --console=plain >"$log_file" 2>&1; then
+if ! ./gradlew "$copy_task" --console=plain >"$log_file" 2>&1; then
     echo "Failed to install smoke mod dependencies"
     tail -200 "$log_file"
     exit 1

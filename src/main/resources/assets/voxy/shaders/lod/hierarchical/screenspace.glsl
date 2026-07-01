@@ -129,7 +129,7 @@ bool outsideFrustum() {
 
 bool isCulledByHiz() {
     //Things start breaking down if the area is the entire scree, no idea why, just abort if we hit this case
-    if ((maxBB.xy-minBB.xy)==vec2(1.0f)) return false;
+    if (any(lessThan(abs(maxBB.xy-minBB.xy-vec2(1.0f)), vec2(0.000001f)))) return false;
 
     ivec2 ssize = ivec2(packedHizSize>>16,packedHizSize&0xFFFF);
     vec2 size = (maxBB.xy-minBB.xy)*ssize;
@@ -141,8 +141,8 @@ bool isCulledByHiz() {
 
     int ml = int(miplevel);
     ssize = max(ivec2(1), ssize>>ml);
-    ivec2 mxbb = min(ivec2(maxBB.xy*ssize),ssize-1);
-    ivec2 mnbb = ivec2(minBB.xy*ssize);
+    ivec2 mxbb = min(ivec2(ceil(maxBB.xy*ssize)),ssize-1);
+    ivec2 mnbb = ivec2(floor(minBB.xy*ssize));
 
     float pointSample = -1.0f;
     //float pointSample2 = 0.0f;
@@ -156,7 +156,7 @@ bool isCulledByHiz() {
     }
     //pointSample = mix(pointSample, pointSample2, pointSample<=0.000001f);
 
-    return pointSample<=minBB.z;
+    return pointSample<minBB.z-0.000001f;
 }
 
 

@@ -309,6 +309,18 @@ task validateMdicDepthState(type: Exec) {
     }
 }
 
+// Validate HiZ culling stays conservative enough to avoid dropping visible LOD nodes
+task validateHizCullingConservative(type: Exec) {
+    description = 'Validates conservative HiZ traversal culling rules'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_hiz_culling_conservative.py'
+
+    onlyIf {
+        file('scripts/validate_hiz_culling_conservative.py').exists()
+    }
+}
+
 // Validate mixin target signatures before compilation
 task validateMixinSignatures(type: Exec) {
     description = 'Validates @Inject/@Shadow targets against Minecraft source'
@@ -348,6 +360,7 @@ compileJava.dependsOn validateOptionalDHBoundary // Before compilation (optional
 compileJava.dependsOn validateShaderVersions    // Before compilation (shader syntax/version check)
 compileJava.dependsOn validateVoxyRuntimeTelemetry // Before compilation (runtime diagnostic boundary check)
 compileJava.dependsOn validateMdicDepthState    // Before compilation (GL state regression check)
+compileJava.dependsOn validateHizCullingConservative // Before compilation (HiZ culling regression check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)
 build.dependsOn validateMixins                   // After JAR creation (content check)
 

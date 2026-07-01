@@ -297,6 +297,18 @@ task validateVoxyRuntimeTelemetry(type: Exec) {
     }
 }
 
+// Validate MDIC renderer restores depth comparison state before draw/cull passes
+task validateMdicDepthState(type: Exec) {
+    description = 'Validates MDIC renderer depth function state setup'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_mdic_depth_state.py'
+
+    onlyIf {
+        file('scripts/validate_mdic_depth_state.py').exists()
+    }
+}
+
 // Validate mixin target signatures before compilation
 task validateMixinSignatures(type: Exec) {
     description = 'Validates @Inject/@Shadow targets against Minecraft source'
@@ -335,6 +347,7 @@ compileJava.dependsOn validateOptionalIrisBoundary // Before compilation (option
 compileJava.dependsOn validateOptionalDHBoundary // Before compilation (optional dependency boundary check)
 compileJava.dependsOn validateShaderVersions    // Before compilation (shader syntax/version check)
 compileJava.dependsOn validateVoxyRuntimeTelemetry // Before compilation (runtime diagnostic boundary check)
+compileJava.dependsOn validateMdicDepthState    // Before compilation (GL state regression check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)
 build.dependsOn validateMixins                   // After JAR creation (content check)
 

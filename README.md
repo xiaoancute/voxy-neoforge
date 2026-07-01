@@ -2,6 +2,8 @@
 
 > **Unofficial NeoForge port** of the Voxy mod
 
+[中文说明](README.zh-CN.md)
+
 ## Special Thanks
 
 **All credit for Voxy goes to [MCRcortex](https://github.com/MCRcortex)**, the original author and creator of this incredible LOD rendering mod.
@@ -61,7 +63,6 @@ You might wonder: "Why not just use the Fabric version with [Sinytra Connector](
 ### Current Limitations
 - Requires Sodium 0.8.12-beta.2+ (NeoForge 1.21.1 backport)
 - Iris shader shadows currently do not render Voxy LODs into the shadow map; this avoids crashes in the Iris shadow pass
-- Nvidium and Vivecraft integrations are not current targets for this port
 - Debug screen integration disabled (MC 1.21.1 API changes)
 - Modern UI is known to interfere with Voxy rendering on the tested modpack
 

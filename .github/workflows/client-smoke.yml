@@ -14,6 +14,7 @@ jobs:
         smoke-profile:
           - sodium-min
           - sodium-min-iris
+          - sodium-min-dh
           - sodium
           - sodium-iris
           - sodium-iris-shaderpack

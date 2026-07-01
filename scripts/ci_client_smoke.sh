@@ -17,6 +17,10 @@ case "$smoke_profile" in
         copy_task="copyClientSmokeIrisMods"
         gradle_args=(-Psodium_version="$min_sodium_version")
         ;;
+    sodium-min-dh)
+        copy_task="copyClientSmokeDhMods"
+        gradle_args=(-Psodium_version="$min_sodium_version")
+        ;;
     sodium)
         copy_task="copyClientSmokeMods"
         ;;

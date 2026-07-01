@@ -370,6 +370,11 @@ configurations {
         canBeResolved = true
         transitive = false
     }
+    clientSmokeDhMods {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
 }
 
 dependencies {
@@ -381,6 +386,7 @@ dependencies {
 
     clientSmokeMods "net.caffeinemc:sodium-neoforge:${project.sodium_version}"
     clientSmokeIrisMods "maven.modrinth:iris:${project.iris_version}"
+    clientSmokeDhMods "maven.modrinth:distanthorizons:3.1.0-b-1.21.1"
 }
 
 // Task to extract LWJGL native binaries (DLLs/SOs) from native JARs
@@ -439,6 +445,15 @@ tasks.register('copyClientSmokeIrisMods', Copy) {
 
     dependsOn 'copyClientSmokeMods'
     from configurations.clientSmokeIrisMods
+    into layout.projectDirectory.dir("runs/client/mods")
+}
+
+tasks.register('copyClientSmokeDhMods', Copy) {
+    description = 'Copies Distant Horizons mod jars required by the client smoke run'
+    group = 'verification'
+
+    dependsOn 'copyClientSmokeMods'
+    from configurations.clientSmokeDhMods
     into layout.projectDirectory.dir("runs/client/mods")
 }
 
@@ -502,13 +517,9 @@ dependencies {
     // commons-pool2 is a transitive dependency of jedis
     implementation 'org.apache.commons:commons-pool2:2.12.0'
 
-    // Distant Horizons import support
-    jarJar(implementation('org.tukaani:xz:1.10')) {
-        version {
-            strictly '[1.9, 2.0)'
-            prefer '1.10'
-        }
-    }
+    // Distant Horizons import support. Do not bundle XZ: Distant Horizons exports
+    // org.tukaani.xz and bundling it creates a JPMS split-package crash.
+    compileOnly 'org.tukaani:xz:1.10'
     jarJar(implementation('org.xerial:sqlite-jdbc:3.49.1.0')) {
         version {
             strictly '[3.40.0.0, 4.0.0.0)'

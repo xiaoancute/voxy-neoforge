@@ -1151,12 +1151,8 @@ public class NodeManager {
         byte childExistence = this.nodeData.getNodeChildExistence(nodeId);
 
         if (childExistence == 0) {
-            if (!this.topLevelNodes.contains(pos)) {//Top level nodes are special, as they can have a request with child existence of 0 for performance reasons
-                Logger.warn("Not creating a leaf request with existence mask of 0 at pos", WorldEngine.pprintPos(pos));
-                this.nodeData.unmarkRequestInFlight(nodeId);
-                this.invalidateNode(nodeId);
-                return;
-            }
+            this.nodeData.unmarkRequestInFlight(nodeId);
+            return;
         }
 
         //Enqueue a leaf expansion request

@@ -7,6 +7,12 @@ log_file="${VOXY_CLIENT_SMOKE_LOG:-build/client-smoke/${smoke_profile}/runClient
 marker="Voxy client initialization completed"
 
 case "$smoke_profile" in
+    sodium-min)
+        copy_task="copyClientSmokeMinSodiumMods"
+        ;;
+    sodium-min-iris)
+        copy_task="copyClientSmokeMinSodiumIrisMods"
+        ;;
     sodium)
         copy_task="copyClientSmokeMods"
         ;;

@@ -12,6 +12,8 @@ jobs:
       fail-fast: false
       matrix:
         smoke-profile:
+          - sodium-min
+          - sodium-min-iris
           - sodium
           - sodium-iris
           - sodium-iris-shaderpack

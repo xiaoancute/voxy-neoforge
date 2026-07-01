@@ -365,6 +365,11 @@ configurations {
         canBeResolved = true
         transitive = false
     }
+    clientSmokeMinSodiumMods {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
     clientSmokeIrisMods {
         canBeConsumed = false
         canBeResolved = true
@@ -380,6 +385,7 @@ dependencies {
     lwjglNativesRaw "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-linux"
 
     clientSmokeMods "net.caffeinemc:sodium-neoforge:${project.sodium_version}"
+    clientSmokeMinSodiumMods "net.caffeinemc:sodium-neoforge:${project.sodium_compat_min_version}"
     clientSmokeIrisMods "maven.modrinth:iris:${project.iris_version}"
 }
 
@@ -438,6 +444,23 @@ tasks.register('copyClientSmokeIrisMods', Copy) {
     group = 'verification'
 
     dependsOn 'copyClientSmokeMods'
+    from configurations.clientSmokeIrisMods
+    into layout.projectDirectory.dir("runs/client/mods")
+}
+
+tasks.register('copyClientSmokeMinSodiumMods', Copy) {
+    description = 'Copies minimum Sodium mod jars required by the client smoke run'
+    group = 'verification'
+
+    from configurations.clientSmokeMinSodiumMods
+    into layout.projectDirectory.dir("runs/client/mods")
+}
+
+tasks.register('copyClientSmokeMinSodiumIrisMods', Copy) {
+    description = 'Copies minimum Sodium and Iris mod jars required by the client smoke run'
+    group = 'verification'
+
+    dependsOn 'copyClientSmokeMinSodiumMods'
     from configurations.clientSmokeIrisMods
     into layout.projectDirectory.dir("runs/client/mods")
 }

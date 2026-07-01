@@ -31,7 +31,7 @@ side="CLIENT"
 [[dependencies.voxy]]
 modId="sodium"
 type="required"
-versionRange="[0.8.12-beta.2,)"
+versionRange="[${sodium_min_version},)"
 ordering="AFTER"
 side="CLIENT"
 

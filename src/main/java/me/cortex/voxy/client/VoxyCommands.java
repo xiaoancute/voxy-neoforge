@@ -31,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 public class VoxyCommands {
+    private static final boolean HAS_DH_IMPORT_LIBRARIES = hasDHImportLibraries();
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
         var imports = Commands.literal("import")
@@ -53,7 +54,7 @@ public class VoxyCommands {
                 .then(Commands.literal("cancel")
                         .executes(VoxyCommands::cancelImport));
 
-        if (DHImporter.HasRequiredLibraries) {
+        if (HAS_DH_IMPORT_LIBRARIES) {
             imports = imports
                     .then(Commands.literal("distant_horizons")
                     .then(Commands.argument("sqlDbPath", StringArgumentType.string())
@@ -64,6 +65,20 @@ public class VoxyCommands {
                 .then(Commands.literal("reload")
                         .executes(VoxyCommands::reloadInstance))
                 .then(imports);
+    }
+
+    private static boolean hasDHImportLibraries() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Class.forName("org.tukaani.xz.ArrayCache", false, VoxyCommands.class.getClassLoader());
+            Class.forName("org.tukaani.xz.BasicArrayCache", false, VoxyCommands.class.getClassLoader());
+            Class.forName("org.tukaani.xz.ResettableArrayCache", false, VoxyCommands.class.getClassLoader());
+            Class.forName("org.tukaani.xz.XZInputStream", false, VoxyCommands.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException | LinkageError e) {
+            Logger.warn("Unable to load sqlite JDBC or lzma decompressor, DH importing wont be available", e);
+            return false;
+        }
     }
 
     private static int reloadInstance(CommandContext<CommandSourceStack> ctx) {

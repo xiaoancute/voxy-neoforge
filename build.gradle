@@ -255,6 +255,18 @@ task validateOptionalIrisBoundary(type: Exec) {
     }
 }
 
+// Validate that optional Distant Horizons import support does not load XZ during command registration
+task validateOptionalDHBoundary(type: Exec) {
+    description = 'Validates that optional DH importer dependencies stay behind runtime probes'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_optional_dh_boundary.py'
+
+    onlyIf {
+        file('scripts/validate_optional_dh_boundary.py').exists()
+    }
+}
+
 // Validate GLSL versions against syntax used by packaged shaders
 task validateShaderVersions(type: Exec) {
     description = 'Validates shader #version declarations against GLSL features in use'
@@ -302,6 +314,7 @@ task validateMixins(type: Exec) {
 // Run validations as part of build process
 compileJava.dependsOn validateMixinConfig       // Before compilation (config check)
 compileJava.dependsOn validateOptionalIrisBoundary // Before compilation (optional dependency boundary check)
+compileJava.dependsOn validateOptionalDHBoundary // Before compilation (optional dependency boundary check)
 compileJava.dependsOn validateShaderVersions    // Before compilation (shader syntax/version check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)
 build.dependsOn validateMixins                   // After JAR creation (content check)

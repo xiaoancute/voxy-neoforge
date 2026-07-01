@@ -47,6 +47,7 @@ config="client.voxy.mixins.json"
 
 [[mixins]]
 config="iris.voxy.mixins.json"
+requiredMods=["iris"]
 
 [[mixins]]
 config="common.voxy.mixins.json"

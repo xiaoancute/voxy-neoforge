@@ -7,6 +7,7 @@ Validates mixin registration, exclusions, remap flags, and potential conflicts
 import json
 import re
 import os
+import tomllib
 from pathlib import Path
 from typing import List, Dict, Set, Tuple
 
@@ -38,8 +39,11 @@ class MixinConfigValidator:
         
         # Check 4: JSON schema validation
         self.check_json_schema()
+
+        # Check 5: Optional mixin gates
+        self.check_optional_mixin_gates()
         
-        # Check 5: Package naming conventions
+        # Check 6: Package naming conventions
         self.check_package_conventions()
         
         # Print summary
@@ -206,10 +210,38 @@ class MixinConfigValidator:
                 print(f"  {RED}✗{NC} JSON parse error")
         
         print()
+
+    def check_optional_mixin_gates(self):
+        """Validate optional integration mixin configs are gated by required mods."""
+        print(f"{BLUE}[5] Optional Mixin Gates{NC}")
+
+        with open('src/main/resources/META-INF/neoforge.mods.toml', 'rb') as f:
+            mods_toml = tomllib.load(f)
+
+        mixin_entries = mods_toml.get('mixins', [])
+        iris_entries = [
+            entry for entry in mixin_entries
+            if entry.get('config') == 'iris.voxy.mixins.json'
+        ]
+
+        if not iris_entries:
+            self.errors.append("iris.voxy.mixins.json is not registered in neoforge.mods.toml")
+            print(f"  {RED}✗{NC} iris.voxy.mixins.json missing from neoforge.mods.toml")
+            print()
+            return
+
+        if not any('iris' in entry.get('requiredMods', []) for entry in iris_entries):
+            self.errors.append("iris.voxy.mixins.json must be gated with requiredMods=[\"iris\"]")
+            print(f"  {RED}✗{NC} Iris mixins are not gated by requiredMods=[\"iris\"]")
+        else:
+            self.passed_checks.append("Iris mixins gated by requiredMods")
+            print(f"  {GREEN}✓{NC} Iris mixins gated by requiredMods")
+
+        print()
     
     def check_package_conventions(self):
         """Check that mixin package naming follows conventions"""
-        print(f"{BLUE}[5] Package Naming Conventions{NC}")
+        print(f"{BLUE}[6] Package Naming Conventions{NC}")
         
         naming_issues = []
         

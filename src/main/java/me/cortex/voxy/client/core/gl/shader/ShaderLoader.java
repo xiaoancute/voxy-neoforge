@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,9 +38,23 @@ public class ShaderLoader {
         shaderSource = processImports(shaderSource);
 
         // Apply Sodium's shader constants processing (handles #define etc.)
-        String processed = ShaderParser.parseShader(shaderSource, ShaderConstants.builder().build()).src();
+        String processed = parseShaderSource(shaderSource);
 
         return processed.replaceAll("\r\n", "\n").stripLeading();
+    }
+
+    private static String parseShaderSource(String shaderSource) {
+        try {
+            Object parsed = ShaderParser.class
+                    .getMethod("parseShader", String.class, ShaderConstants.class)
+                    .invoke(null, shaderSource, ShaderConstants.builder().build());
+            if (parsed instanceof String source) {
+                return source;
+            }
+            return (String) parsed.getClass().getMethod("src").invoke(parsed);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException("Failed to parse shader source with Sodium", e);
+        }
     }
 
     /**

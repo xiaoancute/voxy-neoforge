@@ -16,6 +16,7 @@ public class RenderDistanceTracker {
     private int renderDistance;
     private double posX;
     private double posZ;
+    private boolean firstProcess = true;
     public RenderDistanceTracker(int rate, int minSec, int maxSec, LongConsumer addTopLevelNode, LongConsumer removeTopLevelNode) {
         this.addTopLevelNode = addTopLevelNode;
         this.removeTopLevelNode = removeTopLevelNode;
@@ -33,6 +34,7 @@ public class RenderDistanceTracker {
         this.renderDistance = renderDistance;
         this.tracker.unload();//Mark all as unload
         this.tracker = new RingTracker(this.tracker, renderDistance, ((int)this.posX)>>9, ((int)this.posZ)>>9, true);//Steal from previous tracker
+        this.firstProcess = true;
     }
 
     public boolean setCenterAndProcess(double x, double z) {
@@ -43,7 +45,9 @@ public class RenderDistanceTracker {
             this.posZ = z;
             this.tracker.moveCenter(((int)x)>>9, ((int)z)>>9);
         }
-        return this.tracker.process(this.processRate, this::add, this::rem)!=0;
+        int rate = this.firstProcess ? Integer.MAX_VALUE : this.processRate;
+        this.firstProcess = false;
+        return this.tracker.process(rate, this::add, this::rem)!=0;
     }
 
     private void add(int x, int z) {

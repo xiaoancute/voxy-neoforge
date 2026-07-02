@@ -1,0 +1,71 @@
+{
+  "voxy.config.title": "Voxy",
+
+  "voxy.config.general": "一般",
+  "voxy.config.rendering": "描画",
+
+  "voxy.config.general.enabled": "Voxy を有効化",
+  "voxy.config.general.enabled.tooltip": "Voxy 全体を有効または無効にします",
+
+  "voxy.config.general.serviceThreads": "サービススレッド",
+  "voxy.config.general.serviceThreads.tooltip": "ServiceThreadPool が使用できるスレッド数",
+
+  "voxy.config.general.useSodiumBuilder": "Sodium スレッドを使用",
+  "voxy.config.general.useSodiumBuilder.tooltip": "Sodium のチャンクビルダースレッドを Voxy のスレッドプールに使い、高描画距離で高速移動するときのカクつきや遅延を減らします",
+
+  "voxy.config.general.ingest": "チャンク取り込み",
+  "voxy.config.general.ingest.tooltip": "新しいチャンクを LOD に変換する Voxy の機能を有効または無効にします",
+
+  "voxy.config.general.rendering": "Voxy 描画",
+  "voxy.config.general.rendering.tooltip": "Voxy の描画を有効または無効にします",
+
+  "voxy.config.general.subDivisionSize": "細分化サイズのピクセル平方",
+  "voxy.config.general.subDivisionSize.tooltip": "画面空間 AABB をより小さい LOD に細分化する前の最大ピクセル平方サイズ。小さいほど高品質です",
+
+  "voxy.config.general.renderDistance": "描画距離",
+  "voxy.config.general.renderDistance.tooltip": "Voxy のチャンク描画距離",
+
+  "voxy.config.general.environmental_fog": "環境フォグを有効化",
+  "voxy.config.general.environmental_fog.tooltip": "Voxy 描画の環境フォグを有効または無効にします",
+
+  "voxy.config.general.render_fog": "描画フォグを有効化",
+  "voxy.config.general.render_fog.tooltip": "描画フォグ効果を有効または無効にします",
+
+  "voxy.config.general.render_statistics": "描画統計を有効化",
+  "voxy.config.general.render_statistics.tooltip": "デバッグ用に F3 メニューへ描画統計を表示します",
+
+  "voxy.sodium.page.title": "Voxy",
+
+  "voxy.sodium.option.enabled": "Voxy を有効化",
+  "voxy.sodium.option.enabled.tooltip": "Voxy LOD システム全体を有効または無効にするマスター設定",
+
+  "voxy.sodium.option.enable_rendering": "LOD 描画",
+  "voxy.sodium.option.enable_rendering.tooltip": "LOD 地形の描画を有効にします。無効にすると、データ取り込みは続けたまま表示だけ止めます",
+
+  "voxy.sodium.option.ingest_enabled": "チャンク取り込み",
+  "voxy.sodium.option.ingest_enabled.tooltip": "訪問済みチャンクを LOD データへ自動変換します",
+
+  "voxy.sodium.option.render_distance": "LOD 描画距離",
+  "voxy.sodium.option.render_distance.tooltip": "LOD 地形を描画する距離。値に 32 を掛けたものがチャンク距離です。例: 16 = 512 チャンク",
+
+  "voxy.sodium.option.service_threads": "サービススレッド",
+  "voxy.sodium.option.service_threads.tooltip": "LOD 処理用のバックグラウンドスレッド数。増やすと LOD 生成は速くなりますが CPU 使用率が上がります",
+
+  "voxy.sodium.option.subdivision_size": "細分化サイズ",
+  "voxy.sodium.option.subdivision_size.tooltip": "より高詳細な LOD に細分化する前の最大画面空間サイズ。低いほど細かくなりますが GPU 負荷が増えます",
+
+  "voxy.sodium.option.environmental_fog": "環境フォグ",
+  "voxy.sodium.option.environmental_fog.tooltip": "LOD 地形に環境フォグ効果を適用します",
+
+  "voxy.sodium.option.dont_use_sodium_threads": "独立スレッドプール",
+  "voxy.sodium.option.dont_use_sodium_threads.tooltip": "Sodium のチャンクビルダーとスレッドを共有しません。カクつく場合に有効化してください",
+
+  "voxy.sodium.option.lod_boundary_buffer": "LOD 境界の重なり",
+  "voxy.sodium.option.lod_boundary_buffer.tooltip": "通常チャンクと LOD の重なりを制御します。高いほど高速飛行時の遷移が滑らかになりますが、少し重複描画が増えます",
+
+  "voxy.sodium.option.render_statistics": "デバッグ統計",
+  "voxy.sodium.option.render_statistics.tooltip": "F3 デバッグ画面に LOD 描画統計を表示します",
+
+  "voxy.sodium.option.earth_curve_ratio": "ワールド曲率",
+  "voxy.sodium.option.earth_curve_ratio.tooltip": "球状の惑星に立っているような効果を再現します。0 = 平坦なワールド。値が高いほど惑星が小さく、曲率が強く見えます"
+}

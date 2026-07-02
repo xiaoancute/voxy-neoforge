@@ -1,0 +1,71 @@
+{
+  "voxy.config.title": "Voxy",
+
+  "voxy.config.general": "Общее",
+  "voxy.config.rendering": "Рендеринг",
+
+  "voxy.config.general.enabled": "Включить Voxy",
+  "voxy.config.general.enabled.tooltip": "Полностью включает или отключает Voxy",
+
+  "voxy.config.general.serviceThreads": "Служебные потоки",
+  "voxy.config.general.serviceThreads.tooltip": "Количество потоков, доступных ServiceThreadPool",
+
+  "voxy.config.general.useSodiumBuilder": "Использовать потоки Sodium",
+  "voxy.config.general.useSodiumBuilder.tooltip": "Использует потоки сборки чанков Sodium в пуле Voxy; может уменьшить рывки и задержки при быстром движении на большой дальности",
+
+  "voxy.config.general.ingest": "Загрузка чанков",
+  "voxy.config.general.ingest.tooltip": "Включает или отключает преобразование новых чанков в LOD",
+
+  "voxy.config.general.rendering": "Рендеринг Voxy",
+  "voxy.config.general.rendering.tooltip": "Включает или отключает рендеринг Voxy",
+
+  "voxy.config.general.subDivisionSize": "Размер подразделения в пикселях^2",
+  "voxy.config.general.subDivisionSize.tooltip": "Максимальный размер экранного AABB в пикселях в квадрате перед подразделением на меньшие LOD. Меньше значит выше качество",
+
+  "voxy.config.general.renderDistance": "Дальность рендера",
+  "voxy.config.general.renderDistance.tooltip": "Дальность рендера Voxy в чанках",
+
+  "voxy.config.general.environmental_fog": "Включить окружающий туман",
+  "voxy.config.general.environmental_fog.tooltip": "Включает или отключает окружающий туман для рендера Voxy",
+
+  "voxy.config.general.render_fog": "Включить туман рендера",
+  "voxy.config.general.render_fog.tooltip": "Включает или отключает эффект тумана при рендеринге",
+
+  "voxy.config.general.render_statistics": "Включить статистику рендера",
+  "voxy.config.general.render_statistics.tooltip": "Показывает статистику рендера в меню F3 для отладки",
+
+  "voxy.sodium.page.title": "Voxy",
+
+  "voxy.sodium.option.enabled": "Включить Voxy",
+  "voxy.sodium.option.enabled.tooltip": "Главный переключатель системы Voxy LOD",
+
+  "voxy.sodium.option.enable_rendering": "LOD-рендеринг",
+  "voxy.sodium.option.enable_rendering.tooltip": "Включает рендеринг LOD-ландшафта. Отключите, чтобы продолжить сбор данных без вывода на экран",
+
+  "voxy.sodium.option.ingest_enabled": "Загрузка чанков",
+  "voxy.sodium.option.ingest_enabled.tooltip": "Автоматически преобразует посещенные чанки в LOD-данные",
+
+  "voxy.sodium.option.render_distance": "Дальность LOD-рендера",
+  "voxy.sodium.option.render_distance.tooltip": "Как далеко рендерится LOD-ландшафт. Значение умножается на 32 для получения расстояния в чанках. Пример: 16 = 512 чанков",
+
+  "voxy.sodium.option.service_threads": "Служебные потоки",
+  "voxy.sodium.option.service_threads.tooltip": "Количество фоновых потоков для обработки LOD. Больше потоков быстрее создают LOD, но сильнее нагружают CPU",
+
+  "voxy.sodium.option.subdivision_size": "Размер подразделения",
+  "voxy.sodium.option.subdivision_size.tooltip": "Максимальный экранный размер перед подразделением на более детальные LOD. Ниже значит больше деталей, но выше нагрузка на GPU",
+
+  "voxy.sodium.option.environmental_fog": "Окружающий туман",
+  "voxy.sodium.option.environmental_fog.tooltip": "Применяет эффект окружающего тумана к LOD-ландшафту",
+
+  "voxy.sodium.option.dont_use_sodium_threads": "Отдельный пул потоков",
+  "voxy.sodium.option.dont_use_sodium_threads.tooltip": "Не делить потоки со сборщиком чанков Sodium. Включите, если возникают рывки",
+
+  "voxy.sodium.option.lod_boundary_buffer": "Перекрытие границы LOD",
+  "voxy.sodium.option.lod_boundary_buffer.tooltip": "Управляет перекрытием между обычными чанками и LOD. Выше значит плавнее переходы при быстром полете, но немного больше повторного рендера",
+
+  "voxy.sodium.option.render_statistics": "Отладочная статистика",
+  "voxy.sodium.option.render_statistics.tooltip": "Показывает статистику LOD-рендера на экране отладки F3",
+
+  "voxy.sodium.option.earth_curve_ratio": "Кривизна мира",
+  "voxy.sodium.option.earth_curve_ratio.tooltip": "Имитирует нахождение на сферической планете. 0 = плоский мир. Чем выше значение, тем меньше планета и сильнее кривизна"
+}

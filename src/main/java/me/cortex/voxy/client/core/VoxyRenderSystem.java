@@ -32,13 +32,18 @@ import me.cortex.voxy.client.core.rendering.util.PrintfDebugUtil;
 import me.cortex.voxy.client.core.rendering.util.UploadStream;
 import me.cortex.voxy.client.core.util.GPUTiming;
 import me.cortex.voxy.client.core.util.IrisUtil;
+import me.cortex.voxy.client.mixin.sodium.AccessorRenderSectionManager;
+import me.cortex.voxy.client.mixin.sodium.AccessorSodiumWorldRenderer;
 import me.cortex.voxy.common.Logger;
 import me.cortex.voxy.common.thread.ServiceManager;
 import me.cortex.voxy.common.world.WorldEngine;
 import me.cortex.voxy.commonImpl.VoxyCommon;
+import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.ChunkRenderMatrices;
+import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;
 // TODO: FogParameters removed in Sodium 0.6.x - fog rendering disabled for now
 // import net.caffeinemc.mods.sodium.client.util.FogParameters;
+import net.minecraft.core.SectionPos;
 import net.minecraft.client.Minecraft;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
@@ -466,6 +471,39 @@ public class VoxyRenderSystem {
 
     public void setRenderDistance(int renderDistance) {
         this.renderDistanceTracker.setRenderDistance(renderDistance);
+    }
+
+    public void syncVanillaSectionsFromSodium() {
+        var sodiumRenderer = SodiumWorldRenderer.instanceNullable();
+        if (sodiumRenderer == null) {
+            return;
+        }
+
+        var sectionManager = ((AccessorSodiumWorldRenderer) sodiumRenderer).getRenderSectionManager();
+        if (sectionManager == null) {
+            return;
+        }
+
+        this.chunkBoundRenderer.reset();
+        int added = 0;
+        for (RenderSection section : ((AccessorRenderSectionManager) sectionManager).getSectionByPosition().values()) {
+            if (section == null || section.isDisposed() || section.getFlags() == 0) {
+                continue;
+            }
+            int x = section.getChunkX();
+            int y = section.getChunkY();
+            int z = section.getChunkZ();
+
+            if (VoxyCommon.IS_MINE_IN_ABYSS) {
+                int sector = (x + 512) >> 10;
+                x -= sector << 10;
+                y += 16 + (256 - 32 - sector * 30);
+            }
+
+            this.chunkBoundRenderer.addSection(SectionPos.asLong(x, y, z));
+            added++;
+        }
+        Logger.info("Synced " + added + " Sodium render sections into Voxy chunk bounds");
     }
 
     public Viewport<?> getViewport() {

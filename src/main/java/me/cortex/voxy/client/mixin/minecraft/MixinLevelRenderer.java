@@ -84,6 +84,7 @@ public abstract class MixinLevelRenderer implements IGetVoxyRenderSystem {
         }
         try {
             this.renderer = new VoxyRenderSystem(world, instance.getServiceManager());
+            this.renderer.syncVanillaSectionsFromSodium();
         } catch (RuntimeException e) {
             if (IrisUtil.irisShaderPackEnabled()) {
                 IrisUtil.disableIrisShaders();

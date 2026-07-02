@@ -189,9 +189,10 @@ dependencies {
     // Forgified Fabric API for compatibility (includes Fabric Loader API)
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${project.forgified_fabric_version}"
 
-    // Sodium 0.8 backport for NeoForge 1.21.1
-    implementation "net.caffeinemc:sodium-neoforge:${project.sodium_version}"
-    compileOnly "net.caffeinemc:sodium-neoforge-mod:${project.sodium_version}"
+    def sodiumModule = project.findProperty("sodium_module") ?: "net.caffeinemc:sodium-neoforge"
+    def sodiumModModule = project.findProperty("sodium_mod_module") ?: "net.caffeinemc:sodium-neoforge-mod"
+    implementation "${sodiumModule}:${project.sodium_version}"
+    compileOnly "${sodiumModModule}:${project.sodium_version}"
 
     // Lithium for NeoForge (0.15.1 - latest for MC 1.21.1)
     implementation("maven.modrinth:lithium:mc1.21.1-0.15.1-neoforge")

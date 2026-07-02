@@ -1,0 +1,71 @@
+{
+  "voxy.config.title": "Voxy",
+
+  "voxy.config.general": "일반",
+  "voxy.config.rendering": "렌더링",
+
+  "voxy.config.general.enabled": "Voxy 활성화",
+  "voxy.config.general.enabled.tooltip": "Voxy 전체를 활성화하거나 비활성화합니다",
+
+  "voxy.config.general.serviceThreads": "서비스 스레드",
+  "voxy.config.general.serviceThreads.tooltip": "ServiceThreadPool이 사용할 수 있는 스레드 수",
+
+  "voxy.config.general.useSodiumBuilder": "Sodium 스레드 사용",
+  "voxy.config.general.useSodiumBuilder.tooltip": "Sodium 청크 빌더 스레드를 Voxy 스레드 풀에 사용해 높은 렌더 거리에서 빠르게 이동할 때 끊김과 지연을 줄일 수 있습니다",
+
+  "voxy.config.general.ingest": "청크 수집",
+  "voxy.config.general.ingest.tooltip": "새 청크를 LOD로 변환하는 Voxy 기능을 활성화하거나 비활성화합니다",
+
+  "voxy.config.general.rendering": "Voxy 렌더링",
+  "voxy.config.general.rendering.tooltip": "Voxy 렌더링을 활성화하거나 비활성화합니다",
+
+  "voxy.config.general.subDivisionSize": "세분화 크기 픽셀 제곱",
+  "voxy.config.general.subDivisionSize.tooltip": "화면 공간 AABB를 더 작은 LOD로 세분화하기 전의 최대 픽셀 제곱 크기입니다. 작을수록 품질이 높습니다",
+
+  "voxy.config.general.renderDistance": "렌더 거리",
+  "voxy.config.general.renderDistance.tooltip": "Voxy의 청크 렌더 거리",
+
+  "voxy.config.general.environmental_fog": "환경 안개 활성화",
+  "voxy.config.general.environmental_fog.tooltip": "Voxy 렌더링의 환경 안개를 활성화하거나 비활성화합니다",
+
+  "voxy.config.general.render_fog": "렌더 안개 활성화",
+  "voxy.config.general.render_fog.tooltip": "렌더 안개 효과를 활성화하거나 비활성화합니다",
+
+  "voxy.config.general.render_statistics": "렌더 통계 활성화",
+  "voxy.config.general.render_statistics.tooltip": "디버깅에 유용한 렌더 통계를 F3 메뉴에 표시합니다",
+
+  "voxy.sodium.page.title": "Voxy",
+
+  "voxy.sodium.option.enabled": "Voxy 활성화",
+  "voxy.sodium.option.enabled.tooltip": "Voxy LOD 시스템을 활성화하거나 비활성화하는 전체 스위치",
+
+  "voxy.sodium.option.enable_rendering": "LOD 렌더링",
+  "voxy.sodium.option.enable_rendering.tooltip": "LOD 지형 렌더링을 활성화합니다. 비활성화하면 데이터 수집은 계속되지만 화면에는 표시되지 않습니다",
+
+  "voxy.sodium.option.ingest_enabled": "청크 수집",
+  "voxy.sodium.option.ingest_enabled.tooltip": "방문한 청크를 LOD 데이터로 자동 변환합니다",
+
+  "voxy.sodium.option.render_distance": "LOD 렌더 거리",
+  "voxy.sodium.option.render_distance.tooltip": "LOD 지형 렌더 거리입니다. 값에 32를 곱하면 청크 거리입니다. 예: 16 = 512 청크",
+
+  "voxy.sodium.option.service_threads": "서비스 스레드",
+  "voxy.sodium.option.service_threads.tooltip": "LOD 처리용 백그라운드 스레드 수입니다. 스레드가 많을수록 LOD 생성은 빨라지지만 CPU 사용량이 증가합니다",
+
+  "voxy.sodium.option.subdivision_size": "세분화 크기",
+  "voxy.sodium.option.subdivision_size.tooltip": "더 높은 디테일 LOD로 세분화하기 전의 최대 화면 공간 크기입니다. 낮을수록 디테일은 높아지지만 GPU 작업량이 증가합니다",
+
+  "voxy.sodium.option.environmental_fog": "환경 안개",
+  "voxy.sodium.option.environmental_fog.tooltip": "LOD 지형에 환경 안개 효과를 적용합니다",
+
+  "voxy.sodium.option.dont_use_sodium_threads": "독립 스레드 풀",
+  "voxy.sodium.option.dont_use_sodium_threads.tooltip": "Sodium의 청크 빌더와 스레드를 공유하지 않습니다. 끊김이 발생하면 활성화하세요",
+
+  "voxy.sodium.option.lod_boundary_buffer": "LOD 경계 겹침",
+  "voxy.sodium.option.lod_boundary_buffer.tooltip": "기본 청크와 LOD 사이의 겹침을 제어합니다. 높을수록 빠르게 비행할 때 전환이 부드럽지만 약간의 중복 렌더링이 생깁니다",
+
+  "voxy.sodium.option.render_statistics": "디버그 통계",
+  "voxy.sodium.option.render_statistics.tooltip": "F3 디버그 화면에 LOD 렌더 통계를 표시합니다",
+
+  "voxy.sodium.option.earth_curve_ratio": "월드 곡률",
+  "voxy.sodium.option.earth_curve_ratio.tooltip": "구형 행성 위에 서 있는 효과를 시뮬레이션합니다. 0 = 평평한 월드. 값이 높을수록 행성이 작아지고 곡률이 더 커집니다"
+}

@@ -26,21 +26,21 @@ Alpha, but usable on the tested client stack.
 |-----------|----------------|
 | Minecraft | 1.21.1 |
 | NeoForge | 21.1.234 |
-| Sodium | 0.8.12-beta.2+mc1.21.1 |
+| Sodium | 0.6.13-neoforge and 0.8.12-beta.2+mc1.21.1 |
 | Iris | 1.8.14-beta.1+1.21.1-neoforge |
 | Forgified Fabric API | 0.116.7+2.2.0+1.21.1 |
 
 ## Supported
 
 - LOD terrain rendering beyond vanilla render distance
-- Sodium 0.8.12 render hooks
+- Sodium 0.6.13 and 0.8.12 render hooks
 - Iris shaderpack rendering path
 
 ## Known Compatibility
 
 | Mod / Scenario | Status | Notes |
 |----------------|--------|-------|
-| Sodium 0.8.12-beta.2 | Required, tested | Older Sodium versions are not a target |
+| Sodium 0.6.13-neoforge to 0.8.12-beta.2 | Required, tested in CI | 0.6.13 and 0.8.12 have separate render hook signatures |
 | Iris 1.8.14-beta.1 | Tested | Shaderpacks work; Voxy LODs are not written into Iris shadow maps to avoid shadow pass crashes |
 | Create / Create Aeronautics | Tested | Tested in a large Create/Aeronautics client modpack; still treated as client-side compatibility |
 | Sable | Tested | Works with the current Voxy render path |

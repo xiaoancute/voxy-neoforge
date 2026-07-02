@@ -12,6 +12,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sodium:
+          - label: sodium-0.8.12
+            gradle_args: ""
+          - label: sodium-0.6.13
+            gradle_args: "-Psodium_module=maven.modrinth:sodium -Psodium_mod_module=maven.modrinth:sodium -Psodium_version=mc1.21.1-0.6.13-neoforge -Psodium_min_version=0.6.13"
 
     steps:
       - name: Extract current branch name
@@ -43,7 +51,7 @@ jobs:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Execute Gradle build
-        run: ./gradlew build --console=plain
+        run: ./gradlew build --console=plain ${{ matrix.sodium.gradle_args }}
         env:
           GITHUB_ACTIONS: true
 
@@ -51,7 +59,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: voxy-artifacts-${{ steps.ref.outputs.branch }}
+          name: voxy-artifacts-${{ steps.ref.outputs.branch }}-${{ matrix.sodium.label }}
           path: build/libs/*.jar
           retention-days: 30
 
@@ -59,6 +67,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-logs-${{ steps.ref.outputs.branch }}
+          name: build-logs-${{ steps.ref.outputs.branch }}-${{ matrix.sodium.label }}
           path: build/reports/**/*
           retention-days: 7

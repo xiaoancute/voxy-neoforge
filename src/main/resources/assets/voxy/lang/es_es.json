@@ -1,0 +1,71 @@
+{
+  "voxy.config.title": "Voxy",
+
+  "voxy.config.general": "General",
+  "voxy.config.rendering": "Renderizado",
+
+  "voxy.config.general.enabled": "Activar Voxy",
+  "voxy.config.general.enabled.tooltip": "Activa o desactiva Voxy por completo",
+
+  "voxy.config.general.serviceThreads": "Hilos de servicio",
+  "voxy.config.general.serviceThreads.tooltip": "Número de hilos que puede usar ServiceThreadPool",
+
+  "voxy.config.general.useSodiumBuilder": "Usar hilos de Sodium",
+  "voxy.config.general.useSodiumBuilder.tooltip": "Usa los hilos de construcción de Sodium como parte del grupo de hilos de Voxy; puede reducir tirones y retrasos al moverse rápido con gran distancia de renderizado",
+
+  "voxy.config.general.ingest": "Ingesta de chunks",
+  "voxy.config.general.ingest.tooltip": "Activa o desactiva la conversión de nuevos chunks a LOD",
+
+  "voxy.config.general.rendering": "Renderizado de Voxy",
+  "voxy.config.general.rendering.tooltip": "Activa o desactiva el renderizado de Voxy",
+
+  "voxy.config.general.subDivisionSize": "Tamaño de subdivisión en píxeles^2",
+  "voxy.config.general.subDivisionSize.tooltip": "Tamaño máximo en píxeles al cuadrado del AABB en pantalla antes de subdividir a LOD más pequeños. Menor significa más calidad",
+
+  "voxy.config.general.renderDistance": "Distancia de renderizado",
+  "voxy.config.general.renderDistance.tooltip": "Distancia de renderizado de Voxy en chunks",
+
+  "voxy.config.general.environmental_fog": "Activar niebla ambiental",
+  "voxy.config.general.environmental_fog.tooltip": "Activa o desactiva la niebla ambiental del renderizado de Voxy",
+
+  "voxy.config.general.render_fog": "Activar niebla de renderizado",
+  "voxy.config.general.render_fog.tooltip": "Activa o desactiva el efecto de niebla de renderizado",
+
+  "voxy.config.general.render_statistics": "Activar estadísticas de renderizado",
+  "voxy.config.general.render_statistics.tooltip": "Muestra estadísticas de renderizado en el menú F3, útil para depuración",
+
+  "voxy.sodium.page.title": "Voxy",
+
+  "voxy.sodium.option.enabled": "Activar Voxy",
+  "voxy.sodium.option.enabled.tooltip": "Interruptor principal para activar o desactivar el sistema LOD de Voxy",
+
+  "voxy.sodium.option.enable_rendering": "Renderizado LOD",
+  "voxy.sodium.option.enable_rendering.tooltip": "Activa el renderizado de terreno LOD. Desactívalo para mantener la ingesta de datos sin salida visual",
+
+  "voxy.sodium.option.ingest_enabled": "Ingesta de chunks",
+  "voxy.sodium.option.ingest_enabled.tooltip": "Convierte automáticamente los chunks visitados en datos LOD",
+
+  "voxy.sodium.option.render_distance": "Distancia de renderizado LOD",
+  "voxy.sodium.option.render_distance.tooltip": "Distancia a la que se renderiza el terreno LOD. El valor se multiplica por 32 para obtener la distancia en chunks. Ejemplo: 16 = 512 chunks",
+
+  "voxy.sodium.option.service_threads": "Hilos de servicio",
+  "voxy.sodium.option.service_threads.tooltip": "Número de hilos en segundo plano para procesar LOD. Más hilos generan LOD más rápido, pero usan más CPU",
+
+  "voxy.sodium.option.subdivision_size": "Tamaño de subdivisión",
+  "voxy.sodium.option.subdivision_size.tooltip": "Tamaño máximo en pantalla antes de subdividir a LOD de mayor detalle. Menor = más detalle, pero más trabajo para la GPU",
+
+  "voxy.sodium.option.environmental_fog": "Niebla ambiental",
+  "voxy.sodium.option.environmental_fog.tooltip": "Aplica efectos de niebla ambiental al terreno LOD",
+
+  "voxy.sodium.option.dont_use_sodium_threads": "Grupo de hilos separado",
+  "voxy.sodium.option.dont_use_sodium_threads.tooltip": "No comparte hilos con el constructor de chunks de Sodium. Actívalo si notas tirones",
+
+  "voxy.sodium.option.lod_boundary_buffer": "Solapamiento de borde LOD",
+  "voxy.sodium.option.lod_boundary_buffer.tooltip": "Controla el solapamiento entre chunks vanilla y LOD. Mayor = transiciones más suaves al volar rápido, pero algo de sobredibujado",
+
+  "voxy.sodium.option.render_statistics": "Estadísticas de depuración",
+  "voxy.sodium.option.render_statistics.tooltip": "Muestra estadísticas del renderizado LOD en la pantalla de depuración F3",
+
+  "voxy.sodium.option.earth_curve_ratio": "Curvatura del mundo",
+  "voxy.sodium.option.earth_curve_ratio.tooltip": "Simula estar sobre un planeta esférico. 0 = mundo plano. Valores más altos = planeta más pequeño y más curvatura"
+}

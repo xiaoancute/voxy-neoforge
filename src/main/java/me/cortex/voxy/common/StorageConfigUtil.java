@@ -57,7 +57,7 @@ public class StorageConfigUtil {
         var baseDB = new RocksDBStorageBackend.Config();
 
         var compressor = new ZSTDCompressor.Config();
-        compressor.compressionLevel = 1;
+        compressor.compressionLevel = 3;
 
         var compression = new CompressionStorageAdaptor.Config();
         compression.delegate = baseDB;

@@ -26,21 +26,21 @@ Alpha，但在当前测试栈上可以正常使用。
 |------|----------|
 | Minecraft | 1.21.1 |
 | NeoForge | 21.1.234 |
-| Sodium | 0.8.12-beta.2+mc1.21.1 |
+| Sodium | 0.6.13-neoforge 和 0.8.12-beta.2+mc1.21.1 |
 | Iris | 1.8.14-beta.1+1.21.1-neoforge |
 | Forgified Fabric API | 0.116.7+2.2.0+1.21.1 |
 
 ## 已支持
 
 - 超出原版视距的 LOD 远景地形渲染
-- Sodium 0.8.12 渲染挂钩
+- Sodium 0.6.13 和 0.8.12 渲染挂钩
 - Iris 光影包渲染路径
 
 ## 已知兼容性
 
 | 模组/场景 | 状态 | 说明 |
 |-----------|------|------|
-| Sodium 0.8.12-beta.2 | 必需，已测试 | 低版本 Sodium 不作为目标 |
+| Sodium 0.6.13-neoforge 到 0.8.12-beta.2 | 必需，CI 测试 | 0.6.13 和 0.8.12 使用不同的渲染挂钩签名 |
 | Iris 1.8.14-beta.1 | 已测试 | 光影可用；Voxy LOD 暂不写入 Iris 阴影贴图，以避免 shadow pass 崩溃 |
 | Create / Create Aeronautics | 已测试 | 在大型机械动力/航空学客户端整合包中测试通过，仍按客户端兼容性处理 |
 | Sable | 已测试 | 可与当前 Voxy 渲染路径共存 |

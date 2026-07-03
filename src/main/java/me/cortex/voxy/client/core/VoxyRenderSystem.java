@@ -484,7 +484,6 @@ public class VoxyRenderSystem {
             return;
         }
 
-        this.chunkBoundRenderer.reset();
         int added = 0;
         for (RenderSection section : ((AccessorRenderSectionManager) sectionManager).getSectionByPosition().values()) {
             if (section == null || section.isDisposed() || section.getFlags() == 0) {
@@ -500,10 +499,15 @@ public class VoxyRenderSystem {
                 y += 16 + (256 - 32 - sector * 30);
             }
 
+            if (added == 0) {
+                this.chunkBoundRenderer.reset();
+            }
             this.chunkBoundRenderer.addSection(SectionPos.asLong(x, y, z));
             added++;
         }
-        Logger.info("Synced " + added + " Sodium render sections into Voxy chunk bounds");
+        if (added != 0) {
+            Logger.info("Synced " + added + " Sodium render sections into Voxy chunk bounds");
+        }
     }
 
     public Viewport<?> getViewport() {

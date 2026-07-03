@@ -34,6 +34,14 @@
   "voxy.config.general.render_statistics": "렌더 통계 활성화",
   "voxy.config.general.render_statistics.tooltip": "디버깅에 유용한 렌더 통계를 F3 메뉴에 표시합니다",
 
+  "voxy.config.general.auto_lod_recovery": "LOD 자동 복구",
+  "voxy.config.general.auto_lod_recovery.tooltip": "Sodium 동기화 후 LOD 경계가 비정상적으로 사라지면 Voxy 렌더러를 자동으로 새로 고칩니다",
+
+  "voxy.command.require_enabled": "이 기능을 사용하려면 설정에서 Voxy를 활성화해야 합니다",
+  "voxy.command.refresh.failed": "Voxy 렌더러를 사용할 수 없습니다",
+  "voxy.command.refresh.done": "Voxy 렌더러를 새로 고쳤습니다. Sodium 섹션: %s",
+  "voxy.command.status": "Voxy 상태: %s",
+
   "voxy.sodium.page.title": "Voxy",
 
   "voxy.sodium.option.enabled": "Voxy 활성화",

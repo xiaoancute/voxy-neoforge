@@ -34,6 +34,14 @@
   "voxy.config.general.render_statistics": "Enable render statistics",
   "voxy.config.general.render_statistics.tooltip": "Enable render statistics in F3 menu, useful for debugging",
 
+  "voxy.config.general.auto_lod_recovery": "Auto LOD Recovery",
+  "voxy.config.general.auto_lod_recovery.tooltip": "Automatically refreshes the Voxy renderer when LOD bounds appear to collapse after Sodium sync",
+
+  "voxy.command.require_enabled": "Voxy must be enabled in settings to use this",
+  "voxy.command.refresh.failed": "Voxy renderer is not available",
+  "voxy.command.refresh.done": "Voxy renderer refreshed. Sodium sections: %s",
+  "voxy.command.status": "Voxy status: %s",
+
   "voxy.sodium.page.title": "Voxy",
 
   "voxy.sodium.option.enabled": "Enable Voxy",

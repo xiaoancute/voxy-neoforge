@@ -34,6 +34,14 @@
   "voxy.config.general.render_statistics": "Activar estadísticas de renderizado",
   "voxy.config.general.render_statistics.tooltip": "Muestra estadísticas de renderizado en el menú F3, útil para depuración",
 
+  "voxy.config.general.auto_lod_recovery": "Recuperación LOD automática",
+  "voxy.config.general.auto_lod_recovery.tooltip": "Actualiza automáticamente el renderizador de Voxy si los límites LOD parecen colapsar tras la sincronización con Sodium",
+
+  "voxy.command.require_enabled": "Voxy debe estar activado en la configuración para usar esto",
+  "voxy.command.refresh.failed": "El renderizador de Voxy no está disponible",
+  "voxy.command.refresh.done": "Renderizador de Voxy actualizado. Secciones de Sodium: %s",
+  "voxy.command.status": "Estado de Voxy: %s",
+
   "voxy.sodium.page.title": "Voxy",
 
   "voxy.sodium.option.enabled": "Activar Voxy",

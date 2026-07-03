@@ -34,6 +34,14 @@
   "voxy.config.general.render_statistics": "Включить статистику рендера",
   "voxy.config.general.render_statistics.tooltip": "Показывает статистику рендера в меню F3 для отладки",
 
+  "voxy.config.general.auto_lod_recovery": "Автовосстановление LOD",
+  "voxy.config.general.auto_lod_recovery.tooltip": "Автоматически обновляет рендерер Voxy, если границы LOD выглядят потерянными после синхронизации Sodium",
+
+  "voxy.command.require_enabled": "Чтобы использовать это, включите Voxy в настройках",
+  "voxy.command.refresh.failed": "Рендерер Voxy недоступен",
+  "voxy.command.refresh.done": "Рендерер Voxy обновлен. Секции Sodium: %s",
+  "voxy.command.status": "Состояние Voxy: %s",
+
   "voxy.sodium.page.title": "Voxy",
 
   "voxy.sodium.option.enabled": "Включить Voxy",

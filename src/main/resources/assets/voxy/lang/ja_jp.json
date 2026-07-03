@@ -34,6 +34,14 @@
   "voxy.config.general.render_statistics": "描画統計を有効化",
   "voxy.config.general.render_statistics.tooltip": "デバッグ用に F3 メニューへ描画統計を表示します",
 
+  "voxy.config.general.auto_lod_recovery": "LOD 自動復旧",
+  "voxy.config.general.auto_lod_recovery.tooltip": "Sodium 同期後に LOD 境界が異常に失われた場合、Voxy レンダラーを自動更新します",
+
+  "voxy.command.require_enabled": "この機能を使うには設定で Voxy を有効にしてください",
+  "voxy.command.refresh.failed": "Voxy レンダラーを使用できません",
+  "voxy.command.refresh.done": "Voxy レンダラーを更新しました。Sodium セクション: %s",
+  "voxy.command.status": "Voxy 状態: %s",
+
   "voxy.sodium.page.title": "Voxy",
 
   "voxy.sodium.option.enabled": "Voxy を有効化",

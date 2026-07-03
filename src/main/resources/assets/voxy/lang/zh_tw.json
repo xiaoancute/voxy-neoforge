@@ -34,6 +34,14 @@
   "voxy.config.general.render_statistics": "啟用渲染統計",
   "voxy.config.general.render_statistics.tooltip": "在 F3 選單中顯示渲染統計，方便除錯",
 
+  "voxy.config.general.auto_lod_recovery": "自動恢復 LOD",
+  "voxy.config.general.auto_lod_recovery.tooltip": "當 Sodium 同步後偵測到 LOD 邊界異常遺失時，自動重新整理 Voxy 渲染器",
+
+  "voxy.command.require_enabled": "需要先在設定中啟用 Voxy",
+  "voxy.command.refresh.failed": "Voxy 渲染器無法使用",
+  "voxy.command.refresh.done": "Voxy 渲染器已重新整理。Sodium 區塊段：%s",
+  "voxy.command.status": "Voxy 狀態：%s",
+
   "voxy.sodium.page.title": "Voxy",
 
   "voxy.sodium.option.enabled": "啟用 Voxy",

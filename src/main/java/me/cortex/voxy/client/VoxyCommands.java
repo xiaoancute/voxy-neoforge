@@ -72,6 +72,10 @@ public class VoxyCommands {
         return Commands.literal("voxy")//.requires((ctx)-> VoxyCommon.getInstance() != null)
                 .then(Commands.literal("reload")
                         .executes(VoxyCommands::reloadInstance))
+                .then(Commands.literal("refresh")
+                        .executes(VoxyCommands::refreshRenderer))
+                .then(Commands.literal("status")
+                        .executes(VoxyCommands::printStatus))
                 .then(imports)
                 .then(debug);
     }
@@ -107,6 +111,19 @@ public class VoxyCommands {
 
         var r = Minecraft.getInstance().levelRenderer;
         if (r != null) r.allChanged();
+        return 0;
+    }
+
+    private static int refreshRenderer(CommandContext<CommandSourceStack> ctx) {
+        if (VoxyCommon.getInstance() == null) {
+            ctx.getSource().sendFailure(Component.translatable("voxy.command.require_enabled"));
+            return 1;
+        }
+        return VoxyClient.refreshRenderer("manual command", false) ? 0 : 1;
+    }
+
+    private static int printStatus(CommandContext<CommandSourceStack> ctx) {
+        VoxyClient.sendClientMessage(Component.translatable("voxy.command.status", VoxyClient.getRendererStatus()), false);
         return 0;
     }
 

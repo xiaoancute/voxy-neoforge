@@ -122,7 +122,11 @@ public class VoxyConfigMenu implements ConfigEntryPoint {
                                         "voxy:render_debug",
                                         Component.translatable("voxy.config.general.render_statistics"),
                                         ()-> RenderStatistics.enabled, v->RenderStatistics.enabled=v)
-                                        .setPostChangeFlags(RENDER_RELOAD))
+                                        .setPostChangeFlags(RENDER_RELOAD),
+                                new BoolOption(
+                                        "voxy:auto_lod_recovery",
+                                        Component.translatable("voxy.config.general.auto_lod_recovery"),
+                                        ()->CFG.autoLodRecovery, v->CFG.autoLodRecovery=v))
                 ).setEnablerAND("voxy:enabled", "voxy:rendering"));
 
     }

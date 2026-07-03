@@ -281,6 +281,10 @@ public class ChunkBoundRenderer {
         return count;
     }
 
+    public int getEffectiveSectionCount() {
+        return this.chunk2idx.size() + this.addQueue.size();
+    }
+
     public void free() {
         this.rasterShader.free();
         this.uniformBuffer.free();

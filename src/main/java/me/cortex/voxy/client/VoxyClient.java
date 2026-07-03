@@ -9,6 +9,7 @@ import me.cortex.voxy.common.Logger;
 import me.cortex.voxy.commonImpl.VoxyCommon;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 // TODO: Debug screen API changed in MC 1.21.1 - disabled for now
 // import net.minecraft.client.gui.components.debug.DebugScreenDisplayer;
 // import net.minecraft.client.gui.components.debug.DebugScreenEntries;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 
 import java.util.HashSet;
@@ -32,6 +34,8 @@ import java.util.function.Function;
 @EventBusSubscriber(modid = "voxy", value = Dist.CLIENT)
 public class VoxyClient {
     private static final HashSet<String> FREX = new HashSet<>();
+    private static boolean rendererRefreshQueued;
+    private static String rendererRefreshReason = "";
 
     public static void initVoxyClient() {
         Capabilities.init();//Ensure clinit is called
@@ -66,6 +70,64 @@ public class VoxyClient {
     public static void onRegisterClientCommands(RegisterClientCommandsEvent event) {
         if (VoxyCommon.isAvailable()) {
             event.getDispatcher().register(VoxyCommands.register());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onClientTick(ClientTickEvent.Post event) {
+        if (!rendererRefreshQueued) {
+            return;
+        }
+        String reason = rendererRefreshReason;
+        rendererRefreshQueued = false;
+        rendererRefreshReason = "";
+        refreshRenderer("auto recovery: " + reason, true);
+    }
+
+    public static void queueRendererRefresh(String reason) {
+        if (rendererRefreshQueued) {
+            return;
+        }
+        rendererRefreshQueued = true;
+        rendererRefreshReason = reason;
+    }
+
+    public static boolean refreshRenderer(String reason, boolean actionBarMessage) {
+        var client = Minecraft.getInstance();
+        if (client.level == null || client.levelRenderer == null) {
+            sendClientMessage(Component.translatable("voxy.command.refresh.failed"), actionBarMessage);
+            return false;
+        }
+
+        Logger.warn("Refreshing Voxy renderer: " + reason);
+        client.levelRenderer.allChanged();
+
+        int syncedSections = -1;
+        var renderer = ((IGetVoxyRenderSystem) client.levelRenderer).getVoxyRenderSystem();
+        if (renderer != null) {
+            syncedSections = renderer.syncVanillaSectionsFromSodium();
+        }
+
+        sendClientMessage(Component.translatable("voxy.command.refresh.done", syncedSections), actionBarMessage);
+        return true;
+    }
+
+    public static String getRendererStatus() {
+        var client = Minecraft.getInstance();
+        if (client.levelRenderer == null) {
+            return "levelRenderer=null";
+        }
+        var renderer = ((IGetVoxyRenderSystem) client.levelRenderer).getVoxyRenderSystem();
+        if (renderer == null) {
+            return "renderer=null";
+        }
+        return renderer.getLodRecoveryDebugSummary();
+    }
+
+    public static void sendClientMessage(Component component, boolean actionBar) {
+        var player = Minecraft.getInstance().player;
+        if (player != null) {
+            player.displayClientMessage(component, actionBar);
         }
     }
 

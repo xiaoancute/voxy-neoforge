@@ -32,6 +32,7 @@ public class VoxyConfig {
     public float subDivisionSize = 64;
     public boolean useEnvironmentalFog = true;
     public boolean dontUseSodiumBuilderThreads = false;
+    public boolean autoLodRecovery = true;
 
     // LOD boundary buffer: controls the safety margin between vanilla chunks and LOD rendering
     // Higher values = more overlap, prevents pop-in at chunk boundaries when flying

@@ -81,6 +81,7 @@ public class VoxyRenderSystem {
     private int lastTelemetryOpaqueDraws = -1;
     private int lastTelemetryTranslucentDraws = -1;
     private int lastTelemetryTemporalDraws = -1;
+    private final LodRecoveryTelemetry lodRecoveryTelemetry = new LodRecoveryTelemetry();
 
     private final ViewportSelector<?> viewportSelector;
 
@@ -377,6 +378,7 @@ public class VoxyRenderSystem {
         }
         this.lastTelemetryLogTime = now;
         this.downloadRuntimeTelemetry(viewport);
+        this.lodRecoveryTelemetry.recordFrameBounds(this.chunkBoundRenderer.getEffectiveSectionCount());
         Logger.info("Voxy telemetry: viewport="
                 + viewport.width + "x" + viewport.height
                 + ",camera=" + (int) viewport.cameraX + "," + (int) viewport.cameraY + "," + (int) viewport.cameraZ
@@ -388,7 +390,19 @@ public class VoxyRenderSystem {
                 + ",draws=" + this.lastTelemetryOpaqueDraws + "/" + this.lastTelemetryTranslucentDraws + "/" + this.lastTelemetryTemporalDraws
                 + ",cmdDispatchX=" + this.lastTelemetryCmdDispatchX
                 + ",meshQueue=" + this.renderGen.getTaskCount()
+                + ",lodRecovery={" + this.lodRecoveryTelemetry.getSummary() + "}"
                 + ",nodes={" + this.nodeManager.getDebugSummary() + "}");
+        this.maybeRequestLodRecovery(now);
+    }
+
+    private void maybeRequestLodRecovery(long now) {
+        if (!VoxyConfig.CONFIG.autoLodRecovery) {
+            return;
+        }
+        if (this.lodRecoveryTelemetry.shouldRequestRefresh(now)) {
+            this.lodRecoveryTelemetry.markRefreshRequested(now);
+            VoxyClient.queueRendererRefresh(this.lodRecoveryTelemetry.getSummary());
+        }
     }
 
     private void downloadRuntimeTelemetry(Viewport<?> viewport) {
@@ -473,15 +487,15 @@ public class VoxyRenderSystem {
         this.renderDistanceTracker.setRenderDistance(renderDistance);
     }
 
-    public void syncVanillaSectionsFromSodium() {
+    public int syncVanillaSectionsFromSodium() {
         var sodiumRenderer = SodiumWorldRenderer.instanceNullable();
         if (sodiumRenderer == null) {
-            return;
+            return -1;
         }
 
         var sectionManager = ((AccessorSodiumWorldRenderer) sodiumRenderer).getRenderSectionManager();
         if (sectionManager == null) {
-            return;
+            return -1;
         }
 
         int added = 0;
@@ -507,7 +521,10 @@ public class VoxyRenderSystem {
         }
         if (added != 0) {
             Logger.info("Synced " + added + " Sodium render sections into Voxy chunk bounds");
+            this.lodRecoveryTelemetry.markRefreshObserved();
         }
+        this.lodRecoveryTelemetry.recordSyncResult(added, this.chunkBoundRenderer.getEffectiveSectionCount(), System.currentTimeMillis());
+        return added;
     }
 
     public Viewport<?> getViewport() {
@@ -535,7 +552,12 @@ public class VoxyRenderSystem {
             debug.add("Extra 2 time: " + TimingStatistics.E.pVal() + ", " + TimingStatistics.F.pVal() + ", " + TimingStatistics.G.pVal() + ", " + TimingStatistics.H.pVal() + ", " + TimingStatistics.I.pVal());
         }
         debug.add(GPUTiming.INSTANCE.getDebug());
+        debug.add("LOD recovery: " + this.lodRecoveryTelemetry.getSummary());
         PrintfDebugUtil.addToOut(debug);
+    }
+
+    public String getLodRecoveryDebugSummary() {
+        return this.lodRecoveryTelemetry.getSummary();
     }
 
     public void shutdown() {

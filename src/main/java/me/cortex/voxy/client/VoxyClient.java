@@ -5,6 +5,7 @@ import me.cortex.voxy.client.core.VoxyRenderSystem;
 import me.cortex.voxy.client.core.gl.Capabilities;
 import me.cortex.voxy.client.core.model.bakery.BudgetBufferRenderer;
 import me.cortex.voxy.client.core.rendering.util.SharedIndexBuffer;
+import me.cortex.voxy.client.config.VoxyConfig;
 import me.cortex.voxy.common.Logger;
 import me.cortex.voxy.commonImpl.VoxyCommon;
 import net.minecraft.ChatFormatting;
@@ -114,14 +115,38 @@ public class VoxyClient {
 
     public static String getRendererStatus() {
         var client = Minecraft.getInstance();
+        String baseStatus = getConfigStatus() + "," + getInstanceStatus();
         if (client.levelRenderer == null) {
-            return "levelRenderer=null";
+            return baseStatus + ",levelRenderer=null";
         }
         var renderer = ((IGetVoxyRenderSystem) client.levelRenderer).getVoxyRenderSystem();
         if (renderer == null) {
-            return "renderer=null";
+            return baseStatus + ",renderer=null";
         }
-        return renderer.getLodRecoveryDebugSummary();
+        return baseStatus + "," + renderer.getLodRecoveryDebugSummary();
+    }
+
+    private static String getConfigStatus() {
+        var config = VoxyConfig.CONFIG;
+        return "config={"
+                + "enabled=" + config.enabled
+                + ",rendering=" + config.enableRendering
+                + ",ingest=" + config.ingestEnabled
+                + ",renderDistance=" + config.sectionRenderDistance
+                + ",autoLodRecovery=" + config.autoLodRecovery
+                + ",sodiumBuilderThreads=" + (!config.dontUseSodiumBuilderThreads)
+                + "}";
+    }
+
+    private static String getInstanceStatus() {
+        var instance = VoxyCommon.getInstance();
+        if (instance == null) {
+            return "instance=null,storagePath=null";
+        }
+        if (instance instanceof VoxyClientInstance clientInstance) {
+            return "instance=client,storagePath=" + clientInstance.getStorageBasePath();
+        }
+        return "instance=" + instance.getClass().getSimpleName() + ",storagePath=unknown";
     }
 
     public static void sendClientMessage(Component component, boolean actionBar) {

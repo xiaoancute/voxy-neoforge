@@ -64,6 +64,10 @@ public class VoxyNeoForgeConfig {
             .comment("Don't share threads with Sodium's chunk builder")
             .define("dontUseSodiumBuilderThreads", false);
 
+    private static final ModConfigSpec.BooleanValue AUTO_LOD_RECOVERY = BUILDER
+            .comment("Automatically refresh the Voxy renderer when Sodium sync indicates collapsed LOD bounds")
+            .define("autoLodRecovery", true);
+
     // LOD boundary buffer (overdraw/overlap)
     private static final ModConfigSpec.IntValue LOD_BOUNDARY_BUFFER = BUILDER
             .comment("LOD boundary overlap in blocks (like DH's overdraw prevention)",
@@ -111,6 +115,7 @@ public class VoxyNeoForgeConfig {
         VoxyConfig.CONFIG.subDivisionSize = SUB_DIVISION_SIZE.get().floatValue();
         VoxyConfig.CONFIG.useEnvironmentalFog = USE_ENVIRONMENTAL_FOG.get();
         VoxyConfig.CONFIG.dontUseSodiumBuilderThreads = DONT_USE_SODIUM_BUILDER_THREADS.get();
+        VoxyConfig.CONFIG.autoLodRecovery = AUTO_LOD_RECOVERY.get();
         VoxyConfig.CONFIG.lodBoundaryBuffer = LOD_BOUNDARY_BUFFER.get();
         VoxyConfig.CONFIG.earthCurveRatio = EARTH_CURVE_RATIO.get();
 
@@ -166,6 +171,10 @@ public class VoxyNeoForgeConfig {
 
     public static boolean dontUseSodiumBuilderThreads() {
         return DONT_USE_SODIUM_BUILDER_THREADS.get();
+    }
+
+    public static boolean autoLodRecovery() {
+        return AUTO_LOD_RECOVERY.get();
     }
 
     public static int getLodBoundaryBuffer() {

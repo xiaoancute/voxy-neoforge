@@ -301,6 +301,18 @@ task validateVoxyRuntimeTelemetry(type: Exec) {
     }
 }
 
+// Validate client controls that are easy to miss when adding runtime toggles
+task validateVoxyClientControls(type: Exec) {
+    description = 'Validates Voxy client control wiring and README coverage'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_voxy_client_controls.py'
+
+    onlyIf {
+        file('scripts/validate_voxy_client_controls.py').exists()
+    }
+}
+
 // Validate MDIC renderer restores depth comparison state before draw/cull passes
 task validateMdicDepthState(type: Exec) {
     description = 'Validates MDIC renderer depth function state setup'
@@ -363,6 +375,7 @@ compileJava.dependsOn validateOptionalIrisBoundary // Before compilation (option
 compileJava.dependsOn validateOptionalDHBoundary // Before compilation (optional dependency boundary check)
 compileJava.dependsOn validateShaderVersions    // Before compilation (shader syntax/version check)
 compileJava.dependsOn validateVoxyRuntimeTelemetry // Before compilation (runtime diagnostic boundary check)
+compileJava.dependsOn validateVoxyClientControls // Before compilation (client controls/documentation check)
 compileJava.dependsOn validateMdicDepthState    // Before compilation (GL state regression check)
 compileJava.dependsOn validateHizCullingConservative // Before compilation (HiZ culling regression check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)

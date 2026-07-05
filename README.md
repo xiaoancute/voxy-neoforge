@@ -35,6 +35,17 @@ Alpha, but usable on the tested client stack.
 - LOD terrain rendering beyond vanilla render distance
 - Sodium 0.6.13 and 0.8.12 render hooks
 - Iris shaderpack rendering path
+- Auto LOD Recovery for cases where Sodium section sync temporarily collapses Voxy bounds
+
+## Client Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/voxy refresh` | Rebuilds the client renderer and re-syncs Sodium chunk sections into Voxy bounds |
+| `/voxy status` | Prints the current config, storage path, renderer telemetry, Sodium sync state, and LOD recovery counters |
+| `/voxy reload` | Recreates the Voxy client instance after config or storage changes |
+
+Auto LOD Recovery is enabled by default. If distant chunks become overly simple after reconnecting or changing worlds, Voxy can queue the same renderer refresh automatically instead of requiring a manual toggle.
 
 ## Known Compatibility
 

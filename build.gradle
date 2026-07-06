@@ -313,6 +313,30 @@ task validateVoxyClientControls(type: Exec) {
     }
 }
 
+// Validate LOD mesh generation stays conservative when neighboring cached sections are missing
+task validateConservativeNeighborMeshing(type: Exec) {
+    description = 'Validates conservative Voxy neighbor meshing for missing LOD sections'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_conservative_neighbor_meshing.py'
+
+    onlyIf {
+        file('scripts/validate_conservative_neighbor_meshing.py').exists()
+    }
+}
+
+// Validate chunk ingest only reads live/full chunks and rejects stale client chunk-cache slots
+task validateSafeChunkIngest(type: Exec) {
+    description = 'Validates safe Voxy chunk ingest guards'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_safe_chunk_ingest.py'
+
+    onlyIf {
+        file('scripts/validate_safe_chunk_ingest.py').exists()
+    }
+}
+
 // Validate MDIC renderer restores depth comparison state before draw/cull passes
 task validateMdicDepthState(type: Exec) {
     description = 'Validates MDIC renderer depth function state setup'
@@ -376,6 +400,8 @@ compileJava.dependsOn validateOptionalDHBoundary // Before compilation (optional
 compileJava.dependsOn validateShaderVersions    // Before compilation (shader syntax/version check)
 compileJava.dependsOn validateVoxyRuntimeTelemetry // Before compilation (runtime diagnostic boundary check)
 compileJava.dependsOn validateVoxyClientControls // Before compilation (client controls/documentation check)
+compileJava.dependsOn validateConservativeNeighborMeshing // Before compilation (LOD neighbor meshing regression check)
+compileJava.dependsOn validateSafeChunkIngest // Before compilation (chunk ingest regression check)
 compileJava.dependsOn validateMdicDepthState    // Before compilation (GL state regression check)
 compileJava.dependsOn validateHizCullingConservative // Before compilation (HiZ culling regression check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)

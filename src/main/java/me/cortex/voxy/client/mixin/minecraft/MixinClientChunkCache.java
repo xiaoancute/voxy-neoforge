@@ -7,6 +7,7 @@ import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.fml.ModList;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,9 +23,16 @@ public class MixinClientChunkCache implements ICheekyClientChunkCache {
     @Shadow volatile ClientChunkCache.Storage storage;
 
     @Override
-    public LevelChunk voxy$cheekyGetChunk(int x, int z) {
+    public @Nullable LevelChunk voxy$cheekyGetChunk(int x, int z) {
         //This doesnt do the in range check stuff, it just gets the chunk at all costs
-        return this.storage.getChunk(this.storage.getIndex(x, z));
+        var chunk = this.storage.getChunk(this.storage.getIndex(x, z));
+        if (chunk == null) {
+            return null;
+        }
+        if (chunk.getPos().x == x && chunk.getPos().z == z) {
+            return chunk;
+        }
+        return null;
     }
 
     @Inject(method = "drop", at = @At("HEAD"))

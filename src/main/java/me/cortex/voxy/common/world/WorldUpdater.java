@@ -25,6 +25,7 @@ public class WorldUpdater {
 
         for (int lvl = 0; lvl <= MAX_LOD_LAYER; lvl++) {
             var worldSection = into.acquire(lvl, section.x >> (lvl + 1), section.y >> (lvl + 1), section.z >> (lvl + 1));
+            worldSection.markDataKnown();
 
             int emptinessStateChange = 0;
             //Propagate the child existence state of the previous iteration to this section

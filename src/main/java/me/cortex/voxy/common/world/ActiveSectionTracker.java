@@ -69,6 +69,14 @@ public class ActiveSectionTracker {
         return this.acquire(WorldEngine.getWorldSectionId(lvl, x, y, z), nullOnEmpty);
     }
 
+    private WorldSection returnOrReleaseStorageMissing(WorldSection section, boolean nullOnEmpty) {
+        if (nullOnEmpty && section.isStorageLoadMissing()) {
+            section.release();
+            return null;
+        }
+        return section;
+    }
+
     public WorldSection acquire(long key, boolean nullOnEmpty) {
         //TODO: add optional verification check to ensure this (or other critical systems) arnt being called on the render or server thread
         if (this.engine != null) this.engine.lastActiveTime = System.currentTimeMillis();
@@ -87,7 +95,7 @@ public class ActiveSectionTracker {
                 if (section != null) {
                     section.acquire();
                     lock.unlockRead(stamp);
-                    return section;
+                    return this.returnOrReleaseStorageMissing(section, nullOnEmpty);
                 }
                 lock.unlockRead(stamp);
             } else {//Try to create holder
@@ -159,6 +167,9 @@ public class ActiveSectionTracker {
                     int sky = 15;
                     int block = 0;
                     Arrays.fill(section.data, Mapper.composeMappingId((byte) (sky|(block<<4)),0,0));
+                    section.markStorageLoadMissing();
+                } else {
+                    section.markDataKnown();
                 }
                 section.acquire(1);
             }
@@ -175,7 +186,7 @@ public class ActiveSectionTracker {
                 section.release();
                 return null;
             }
-            return section;
+            return this.returnOrReleaseStorageMissing(section, nullOnEmpty);
         } else {
             //TODO: mark the time the loading started in nanos, then here if it has been a while, spin lock, else jump back to the executing service and do work
             VarHandle.fullFence();
@@ -188,12 +199,12 @@ public class ActiveSectionTracker {
             //Try to acquire a pre lock
             if (0<((int)VolatileHolder.POST_ACQUIRE_COUNT.getAndAdd(holder, -1))) {
                 //We managed to acquire one of the pre locks, so just return the section
-                return section;
+                return this.returnOrReleaseStorageMissing(section, nullOnEmpty);
             } else {
                 //lock.lock();
                 {//Dont think need to lock here
                     if (section.tryAcquire()) {
-                        return section;
+                        return this.returnOrReleaseStorageMissing(section, nullOnEmpty);
                     }
                 }
                 //lock.unlock();

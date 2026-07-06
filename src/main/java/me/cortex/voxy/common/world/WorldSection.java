@@ -58,6 +58,7 @@ public final class WorldSection {
     final ActiveSectionTracker tracker;
     volatile boolean inSaveQueue;
     volatile boolean isDirty;
+    volatile boolean storageLoadMissing;
 
     //When the first bit is set it means its loaded
     @SuppressWarnings("all")
@@ -81,6 +82,18 @@ public final class WorldSection {
 
     void primeForReuse() {
         ATOMIC_STATE_HANDLE.set(this, 1);
+    }
+
+    void markStorageLoadMissing() {
+        this.storageLoadMissing = true;
+    }
+
+    void markDataKnown() {
+        this.storageLoadMissing = false;
+    }
+
+    public boolean isStorageLoadMissing() {
+        return this.storageLoadMissing;
     }
 
     public long[] _unsafeGetRawDataArray() {

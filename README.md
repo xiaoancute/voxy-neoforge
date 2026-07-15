@@ -53,6 +53,7 @@ Auto LOD Recovery is enabled by default. If distant chunks become overly simple 
 |----------------|--------|-------|
 | Sodium 0.6.13-neoforge to 0.8.12-beta.2 | Required, tested in CI | 0.6.13 and 0.8.12 have separate render hook signatures |
 | Iris 1.8.14-beta.1 | Tested | Shaderpacks work; Voxy LODs are not written into Iris shadow maps to avoid shadow pass crashes |
+| C2ME 0.4.0 alpha (NeoForge) | Compatible, indirect | Only accelerates integrated-server chunk work; Voxy now budgets initial client LOD loading per frame to avoid world-join contention. C2ME does not accelerate Voxy on remote servers |
 | Create / Create Aeronautics | Tested | Tested in a large Create/Aeronautics client modpack; still treated as client-side compatibility |
 | Sable | Tested | Works with the current Voxy render path |
 | Modern UI | Known conflict | Can cause Voxy cache to exist but not render; disable it first if LODs disappear |

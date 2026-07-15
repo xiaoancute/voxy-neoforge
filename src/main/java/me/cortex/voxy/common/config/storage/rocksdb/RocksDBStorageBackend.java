@@ -97,8 +97,6 @@ public class RocksDBStorageBackend extends StorageBackend {
             this.sectionReadOps = new ReadOptions();
             this.sectionWriteOps = new WriteOptions();
 
-            this.closeList.addAll(handles);
-            this.closeList.add(this.db);
             this.closeList.add(options);
             this.closeList.add(cfOpts);
             this.closeList.add(cfWorldSecOpts);
@@ -106,6 +104,7 @@ public class RocksDBStorageBackend extends StorageBackend {
             this.closeList.add(this.sectionWriteOps);
             this.closeList.add(filter);
             this.closeList.add(bCache);
+            this.closeList.addAll(handles);
 
             this.worldSections = handles.get(1);
             this.idMappings = handles.get(2);
@@ -119,17 +118,17 @@ public class RocksDBStorageBackend extends StorageBackend {
     @Override
     public void iterateStoredSectionPositions(LongConsumer consumer) {
         try (var stack = MemoryStack.stackPush()) {
-            ByteBuffer keyBuff = stack.calloc(8);
-            long keyBuffPtr = MemoryUtil.memAddress(keyBuff);
-            var iter = this.db.newIterator(this.worldSections, this.sectionReadOps);
-            iter.seekToFirst();
-            while (iter.isValid()) {
-                iter.key(keyBuff);
-                long key = Long.reverseBytes(MemoryUtil.memGetLong(keyBuffPtr));
-                consumer.accept(key);
-                iter.next();
+            try (var iter = this.db.newIterator(this.worldSections, this.sectionReadOps)) {
+                ByteBuffer keyBuff = stack.calloc(8);
+                long keyBuffPtr = MemoryUtil.memAddress(keyBuff);
+                iter.seekToFirst();
+                while (iter.isValid()) {
+                    iter.key(keyBuff);
+                    long key = Long.reverseBytes(MemoryUtil.memGetLong(keyBuffPtr));
+                    consumer.accept(key);
+                    iter.next();
+                }
             }
-            iter.close();
         }
     }
 
@@ -193,10 +192,11 @@ public class RocksDBStorageBackend extends StorageBackend {
 
     @Override
     public Int2ObjectOpenHashMap<byte[]> getIdMappingsData() {
-        var iterator = this.db.newIterator(this.idMappings);
         var out = new Int2ObjectOpenHashMap<byte[]>();
-        for (iterator.seekToFirst(); iterator.isValid(); iterator.next()) {
-            out.put(bytesToInt(iterator.key()), iterator.value());
+        try (var iterator = this.db.newIterator(this.idMappings)) {
+            for (iterator.seekToFirst(); iterator.isValid(); iterator.next()) {
+                out.put(bytesToInt(iterator.key()), iterator.value());
+            }
         }
         return out;
     }
@@ -214,6 +214,11 @@ public class RocksDBStorageBackend extends StorageBackend {
     public void close() {
         this.flush();
         this.closeList.forEach(AbstractImmutableNativeReference::close);
+        try {
+            this.db.closeE();
+        } catch (RocksDBException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static byte[] intToBytes(int i) {

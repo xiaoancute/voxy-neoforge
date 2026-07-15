@@ -378,6 +378,20 @@ task validateMixinSignatures(type: Exec) {
     ignoreExitValue = true
 }
 
+task validateStartupLodBudget(type: Exec) {
+    description = 'Validates that initial LOD loading stays within the per-frame work budget'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_startup_lod_budget.py'
+}
+
+task validateRocksdbLifecycle(type: Exec) {
+    description = 'Validates RocksDB iterator and native shutdown lifecycle'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_rocksdb_lifecycle.py'
+}
+
 // Validate mixin configurations after JAR creation
 task validateMixins(type: Exec) {
     dependsOn jar
@@ -404,6 +418,8 @@ compileJava.dependsOn validateConservativeNeighborMeshing // Before compilation 
 compileJava.dependsOn validateSafeChunkIngest // Before compilation (chunk ingest regression check)
 compileJava.dependsOn validateMdicDepthState    // Before compilation (GL state regression check)
 compileJava.dependsOn validateHizCullingConservative // Before compilation (HiZ culling regression check)
+compileJava.dependsOn validateStartupLodBudget // Before compilation (world-join performance regression check)
+compileJava.dependsOn validateRocksdbLifecycle // Before compilation (storage lifecycle regression check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)
 build.dependsOn validateMixins                   // After JAR creation (content check)
 
@@ -614,7 +630,7 @@ dependencies {
     jarJar(implementation('org.rocksdb:rocksdbjni')) {
         version {
             strictly '[10.0.0, 11.0.0)'
-            prefer '10.2.1'
+            prefer '10.9.1'
         }
     }
 

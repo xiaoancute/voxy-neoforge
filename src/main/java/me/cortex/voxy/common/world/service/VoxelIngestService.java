@@ -32,23 +32,25 @@ public class VoxelIngestService {
 
     private void processJob() {
         var task = this.ingestQueue.pop();
-        task.world.markActive();
+        try {
+            var section = task.section;
+            var vs = SECTION_CACHE.get().setPosition(task.cx, task.cy, task.cz);
 
-        var section = task.section;
-        var vs = SECTION_CACHE.get().setPosition(task.cx, task.cy, task.cz);
-
-        if (section.hasOnlyAir() && task.blockLight==null && task.skyLight==null) {//If the chunk section has lighting data, propagate it
-            WorldUpdater.insertUpdate(task.world, vs.zero());
-        } else {
-            VoxelizedSection csec = WorldConversionFactory.convert(
-                    SECTION_CACHE.get(),
-                    task.world.getMapper(),
-                    section.getStates(),
-                    section.getBiomes(),
-                    getLightingSupplier(task)
-            );
-            WorldConversionFactory.mipSection(csec, task.world.getMapper());
-            WorldUpdater.insertUpdate(task.world, csec);
+            if (section.hasOnlyAir() && task.blockLight==null && task.skyLight==null) {//If the chunk section has lighting data, propagate it
+                WorldUpdater.insertUpdate(task.world, vs.zero());
+            } else {
+                VoxelizedSection csec = WorldConversionFactory.convert(
+                        SECTION_CACHE.get(),
+                        task.world.getMapper(),
+                        section.getStates(),
+                        section.getBiomes(),
+                        getLightingSupplier(task)
+                );
+                WorldConversionFactory.mipSection(csec, task.world.getMapper());
+                WorldUpdater.insertUpdate(task.world, csec);
+            }
+        } finally {
+            task.world.releaseRef();
         }
     }
 
@@ -121,12 +123,13 @@ public class VoxelIngestService {
             for (var section : chunk.getSections()) {
                 i++;
                 if (section == null || !shouldIngestSection(section, chunk.getPos().x, i, chunk.getPos().z)) continue;
-                engine.markActive();
+                engine.acquireRef();
                 this.ingestQueue.add(new IngestSection(chunk.getPos().x, i, chunk.getPos().z, engine, section, null, null));
                 try {
                     this.service.execute();
                 } catch (Exception e) {
                     Logger.error("Executing had an error: assume shutting down, aborting",e);
+                    engine.releaseRef();
                     break;
                 }
             }
@@ -162,12 +165,13 @@ public class VoxelIngestService {
             //if (blNone && slNone) {
             //    continue;
             //}
-            engine.markActive();
+            engine.acquireRef();
             this.ingestQueue.add(new IngestSection(chunk.getPos().x, i, chunk.getPos().z, engine, section, bl, sl));//TODO: fixme, this is technically not safe todo on the chunk load ingest, we need to copy the section data so it cant be modified while being read
             try {
                 this.service.execute();
             } catch (Exception e) {
                 Logger.error("Executing had an error: assume shutting down, aborting",e);
+                engine.releaseRef();
                 break;
             }
         }
@@ -180,6 +184,9 @@ public class VoxelIngestService {
 
     public void shutdown() {
         this.service.shutdown();
+        while (!this.ingestQueue.isEmpty()) {
+            this.ingestQueue.pop().world.releaseRef();
+        }
     }
 
     //Utility method to ingest a chunk into the given WorldIdentifier or world
@@ -199,12 +206,14 @@ public class VoxelIngestService {
     }
 
     private boolean rawIngest0(WorldEngine engine, LevelChunkSection section, int x, int y, int z, DataLayer bl, DataLayer sl) {
+        engine.acquireRef();
         this.ingestQueue.add(new IngestSection(x, y, z, engine, section, bl, sl));
         try {
             this.service.execute();
             return true;
         } catch (Exception e) {
             Logger.error("Executing had an error: assume shutting down, aborting",e);
+            engine.releaseRef();
             return false;
         }
     }

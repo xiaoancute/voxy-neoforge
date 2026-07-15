@@ -7,6 +7,7 @@ CHUNK_CACHE_IFACE = ROOT / "src/main/java/me/cortex/voxy/client/ICheekyClientChu
 CHUNK_CACHE_MIXIN = ROOT / "src/main/java/me/cortex/voxy/client/mixin/minecraft/MixinClientChunkCache.java"
 CLIENT_LEVEL_MIXIN = ROOT / "src/main/java/me/cortex/voxy/client/mixin/minecraft/MixinClientLevel.java"
 SODIUM_RSM_MIXIN = ROOT / "src/main/java/me/cortex/voxy/client/mixin/sodium/MixinRenderSectionManager.java"
+INGEST_SERVICE = ROOT / "src/main/java/me/cortex/voxy/common/world/service/VoxelIngestService.java"
 BUILD = ROOT / "build.gradle"
 
 
@@ -26,6 +27,7 @@ def main() -> int:
         chunk_cache = CHUNK_CACHE_MIXIN.read_text(encoding="utf-8")
         client_level = CLIENT_LEVEL_MIXIN.read_text(encoding="utf-8")
         sodium_rsm = SODIUM_RSM_MIXIN.read_text(encoding="utf-8")
+        ingest_service = INGEST_SERVICE.read_text(encoding="utf-8")
         build = BUILD.read_text(encoding="utf-8")
 
         require(iface, "@Nullable", "cheeky chunk lookup contract must allow absent chunks")
@@ -41,6 +43,11 @@ def main() -> int:
         require(sodium_rsm, "getChunk(x, z, ChunkStatus.FULL, false)", "Sodium section unload ingest must not force chunk loading")
         require(sodium_rsm, "if (chunk != null)", "Sodium section unload ingest must skip missing chunks")
         reject(sodium_rsm, "this.level.getChunk(x,z).getSection", "Sodium section unload ingest must not blindly fetch by x/z")
+
+        require(ingest_service, "engine.acquireRef();", "queued ingest work must retain its world engine")
+        require(ingest_service, "task.world.releaseRef();", "completed ingest work must release its world engine")
+        require(ingest_service, "while (!this.ingestQueue.isEmpty())", "shutdown must drain unscheduled ingest references")
+        require(ingest_service, "this.ingestQueue.pop().world.releaseRef();", "shutdown must release queued world references")
 
         require(build, "task validateSafeChunkIngest", "build must define safe chunk ingest validation task")
         require(build, "compileJava.dependsOn validateSafeChunkIngest", "compileJava must depend on safe chunk ingest validation")

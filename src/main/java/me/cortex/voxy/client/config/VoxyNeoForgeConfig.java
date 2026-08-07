@@ -3,6 +3,7 @@ package me.cortex.voxy.client.config;
 import me.cortex.voxy.client.RenderStatistics;
 import me.cortex.voxy.common.util.cpu.CpuLayout;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
@@ -15,7 +16,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
  *
  * This wraps the existing VoxyConfig and syncs values between the two systems.
  */
-@EventBusSubscriber(modid = "voxy", bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = "voxy", value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class VoxyNeoForgeConfig {
 
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();

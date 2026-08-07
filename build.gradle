@@ -164,6 +164,11 @@ neoForge {
             client()
             gameDirectory.set(layout.projectDirectory.dir("runs/client"))
         }
+        server {
+            server()
+            gameDirectory.set(layout.projectDirectory.dir("runs/server"))
+            programArgument '--nogui'
+        }
     }
 
     mods {
@@ -392,6 +397,13 @@ task validateRocksdbLifecycle(type: Exec) {
     commandLine 'python3', 'scripts/validate_rocksdb_lifecycle.py'
 }
 
+task validateServerBoundary(type: Exec) {
+    description = 'Validates that dedicated-server entrypoints do not depend on client-only classes'
+    group = 'verification'
+
+    commandLine 'python3', 'scripts/validate_server_boundary.py'
+}
+
 // Validate mixin configurations after JAR creation
 task validateMixins(type: Exec) {
     dependsOn jar
@@ -421,6 +433,7 @@ compileJava.dependsOn validateHizCullingConservative // Before compilation (HiZ 
 compileJava.dependsOn validateStartupLodBudget // Before compilation (world-join performance regression check)
 compileJava.dependsOn validateRocksdbLifecycle // Before compilation (storage lifecycle regression check)
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)
+compileJava.dependsOn validateServerBoundary    // Before compilation (dedicated-server boundary check)
 build.dependsOn validateMixins                   // After JAR creation (content check)
 
 

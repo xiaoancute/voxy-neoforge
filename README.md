@@ -36,6 +36,7 @@ Alpha, but usable on the tested client stack.
 - Sodium 0.6.13 and 0.8.12 render hooks
 - Iris shaderpack rendering path
 - Auto LOD Recovery for cases where Sodium section sync temporarily collapses Voxy bounds
+- Dedicated-server companion that ingests newly generated chunks into a server-side LOD cache
 
 ## Client Commands
 
@@ -47,6 +48,19 @@ Alpha, but usable on the tested client stack.
 
 Auto LOD Recovery is enabled by default. If distant chunks become overly simple after reconnecting or changing worlds, Voxy can queue the same renderer refresh automatically instead of requiring a manual toggle.
 
+## Dedicated Server
+
+The same jar can now be installed on a NeoForge 1.21.1 dedicated server. The server does not load Sodium, Iris, or OpenGL rendering code. It converts complete chunks into Voxy LOD data in the background and stores them under `<world>/voxy/server/`.
+
+Server settings live in the world's `serverconfig/voxy-server.toml`:
+
+- `ingestGeneratedChunks` is enabled by default and processes newly generated chunks.
+- `ingestLoadedChunks` is disabled by default; enabling it also processes existing chunks at additional CPU and disk cost.
+- `serviceThreads` controls the background worker count.
+- `maxIngestQueue` applies backpressure during fast chunk generation.
+
+Administrators can run `/voxy server status` to inspect the cache path, queue, and ingestion counters. This first server phase prepares and persists LOD data but does not stream it to clients yet; clients still maintain their own local cache.
+
 ## Known Compatibility
 
 | Mod / Scenario | Status | Notes |
@@ -57,7 +71,7 @@ Auto LOD Recovery is enabled by default. If distant chunks become overly simple 
 | Create / Create Aeronautics | Tested | Tested in a large Create/Aeronautics client modpack; still treated as client-side compatibility |
 | Sable | Tested | Works with the current Voxy render path |
 | Modern UI | Known conflict | Can cause Voxy cache to exist but not render; disable it first if LODs disappear |
-| Dedicated server | Not supported, not needed | This is a client-side rendering mod; do not install it on a dedicated server |
+| Dedicated server | Companion support | Optional; builds a server LOD cache without loading client rendering code |
 
 Mods not listed here are not automatically incompatible; they are just not main verified targets. Small UI, cosmetic, and utility mods are intentionally not tracked one by one.
 
@@ -65,6 +79,7 @@ Mods not listed here are not automatically incompatible; they are just not main 
 
 - Iris shader shadows do not include Voxy LOD terrain.
 - Debug screen integration is currently disabled.
+- Server-side LOD data is not streamed to clients yet.
 
 ## Installation
 
@@ -72,7 +87,7 @@ Mods not listed here are not automatically incompatible; they are just not main 
 2. Install Sodium and Forgified Fabric API.
 3. Install Iris if you want shaderpack support.
 4. Build this project and place the generated jar in the client `mods` folder.
-5. Do not place it in a server `mods` folder.
+5. The server companion is optional; place the same jar in the server `mods` folder when server-side LOD pre-generation is desired.
 
 ## Build
 

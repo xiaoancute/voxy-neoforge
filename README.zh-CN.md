@@ -58,8 +58,10 @@ Alpha，但在当前测试栈上可以正常使用。
 - `ingestLoadedChunks` 默认关闭；开启后也会处理已有区块，CPU 和磁盘负载会增加。
 - `serviceThreads` 控制后台线程数。
 - `maxIngestQueue` 为区块快速生成时提供背压保护。
+- `serveRemoteLod` 控制是否允许兼容的 Voxy 客户端下载缺失缓存。
+- `maxRemoteRequestsPerSecond` 与 `maxRemoteResponseBytes` 限制每位玩家的请求速率和单包响应大小。
 
-管理员可使用 `/voxy server status` 查看缓存路径、队列和采集计数。当前阶段服务端缓存用于预生成和后续数据协议，不会主动把 LOD 流式发送给客户端；客户端仍会维护自己的本地缓存。
+管理员可使用 `/voxy server status` 查看缓存路径、采集计数和网络统计。兼容客户端会先协商协议，再批量请求缺失 section，把服务端方块/生物群系映射转换成本地编号并写入自己的缓存。客户端可关闭 `useServerLod`，服务端也可关闭 `serveRemoteLod`。
 
 ## 已知兼容性
 
@@ -71,7 +73,7 @@ Alpha，但在当前测试栈上可以正常使用。
 | Create / Create Aeronautics | 已测试 | 在大型机械动力/航空学客户端整合包中测试通过，仍按客户端兼容性处理 |
 | Sable | 已测试 | 可与当前 Voxy 渲染路径共存 |
 | Modern UI | 已知冲突 | 可能导致 Voxy 有缓存但不绘制；遇到 LOD 不显示优先关闭它 |
-| 专用服务器 | Companion 支持 | 可选安装；生成服务端 LOD 缓存，不加载客户端渲染代码 |
+| 专用服务器 | Companion 支持 | 可选安装；生成并按限额提供 LOD 缓存，不加载客户端渲染代码 |
 
 没有列出的模组不代表不兼容，只是没有作为主要目标确认。小型 UI、美化、辅助类模组不在这里逐个记录。
 
@@ -79,7 +81,7 @@ Alpha，但在当前测试栈上可以正常使用。
 
 - Iris 光影阴影不会包含 Voxy LOD 远景。
 - Debug screen 集成暂时关闭。
-- 服务端暂不向客户端传输 LOD 缓存。
+- 远程 LOD 当前按需请求；实时推送更新和缓存失效协议尚未实现。
 
 ## 安装
 

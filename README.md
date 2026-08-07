@@ -58,8 +58,10 @@ Server settings live in the world's `serverconfig/voxy-server.toml`:
 - `ingestLoadedChunks` is disabled by default; enabling it also processes existing chunks at additional CPU and disk cost.
 - `serviceThreads` controls the background worker count.
 - `maxIngestQueue` applies backpressure during fast chunk generation.
+- `serveRemoteLod` lets compatible Voxy clients download missing cached sections.
+- `maxRemoteRequestsPerSecond` and `maxRemoteResponseBytes` bound per-player request rate and response size.
 
-Administrators can run `/voxy server status` to inspect the cache path, queue, and ingestion counters. This first server phase prepares and persists LOD data but does not stream it to clients yet; clients still maintain their own local cache.
+Administrators can run `/voxy server status` to inspect the cache path plus ingestion and network counters. Compatible clients negotiate protocol support, request missing sections in small batches, remap the server's block and biome ids, and persist the result in their own local cache. Set the client `useServerLod` option or server `serveRemoteLod` option to `false` to disable this path.
 
 ## Known Compatibility
 
@@ -71,7 +73,7 @@ Administrators can run `/voxy server status` to inspect the cache path, queue, a
 | Create / Create Aeronautics | Tested | Tested in a large Create/Aeronautics client modpack; still treated as client-side compatibility |
 | Sable | Tested | Works with the current Voxy render path |
 | Modern UI | Known conflict | Can cause Voxy cache to exist but not render; disable it first if LODs disappear |
-| Dedicated server | Companion support | Optional; builds a server LOD cache without loading client rendering code |
+| Dedicated server | Companion support | Optional; builds and serves a bounded LOD cache without loading client rendering code |
 
 Mods not listed here are not automatically incompatible; they are just not main verified targets. Small UI, cosmetic, and utility mods are intentionally not tracked one by one.
 
@@ -79,7 +81,7 @@ Mods not listed here are not automatically incompatible; they are just not main 
 
 - Iris shader shadows do not include Voxy LOD terrain.
 - Debug screen integration is currently disabled.
-- Server-side LOD data is not streamed to clients yet.
+- Remote LOD transfer is request-based; live push updates and cache invalidation are not implemented yet.
 
 ## Installation
 

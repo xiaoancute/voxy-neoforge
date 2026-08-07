@@ -23,7 +23,8 @@ public final class VoxyServerCommands {
             source.sendSuccess(() -> Component.literal("Voxy server companion is disabled"), false);
             return 0;
         }
-        String status = instance.getStatus() + "," + VoxyServerLifecycle.getIngestStatus();
+        String status = instance.getStatus() + "," + VoxyServerLifecycle.getIngestStatus()
+                + "," + VoxyServerNetwork.getStatus();
         source.sendSuccess(() -> Component.literal("Voxy server: " + status), false);
         return 1;
     }

@@ -28,6 +28,18 @@ public final class VoxyServerConfig {
             .comment("Stop accepting chunk-load work while this many ingestion tasks are queued")
             .defineInRange("maxIngestQueue", 1024, 64, 16384);
 
+    private static final ModConfigSpec.BooleanValue SERVE_REMOTE_LOD = BUILDER
+            .comment("Allow Voxy clients to request cached LOD sections from this server")
+            .define("serveRemoteLod", true);
+
+    private static final ModConfigSpec.IntValue MAX_REMOTE_REQUESTS_PER_SECOND = BUILDER
+            .comment("Maximum remote LOD section requests accepted per player per second")
+            .defineInRange("maxRemoteRequestsPerSecond", 32, 1, 512);
+
+    private static final ModConfigSpec.IntValue MAX_REMOTE_RESPONSE_BYTES = BUILDER
+            .comment("Maximum uncompressed bytes in one remote LOD response")
+            .defineInRange("maxRemoteResponseBytes", 900_000, 262_144, 1_000_000);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private VoxyServerConfig() {
@@ -55,6 +67,18 @@ public final class VoxyServerConfig {
 
     public static int maxIngestQueue() {
         return MAX_INGEST_QUEUE.get();
+    }
+
+    public static boolean serveRemoteLod() {
+        return isEnabled() && SERVE_REMOTE_LOD.get();
+    }
+
+    public static int maxRemoteRequestsPerSecond() {
+        return MAX_REMOTE_REQUESTS_PER_SECOND.get();
+    }
+
+    public static int maxRemoteResponseBytes() {
+        return Math.min(MAX_REMOTE_RESPONSE_BYTES.get(), me.cortex.voxy.network.VoxyPayloads.MAX_RESPONSE_BYTES);
     }
 
     private static int defaultThreadCount() {

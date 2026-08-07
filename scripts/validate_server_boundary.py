@@ -20,6 +20,17 @@ def main() -> int:
             "ServerStoppingEvent",
             "ChunkEvent.Load",
         ],
+        "src/main/java/me/cortex/voxy/server/VoxyServerNetwork.java": [
+            "Dist.DEDICATED_SERVER",
+            ".optional()",
+            "maxRemoteRequestsPerSecond()",
+            "maxRemoteResponseBytes()",
+        ],
+        "src/main/java/me/cortex/voxy/network/VoxyPayloads.java": [
+            "PROTOCOL_VERSION",
+            "MAX_REQUEST_SECTIONS",
+            "MAX_RESPONSE_BYTES",
+        ],
         "src/main/resources/META-INF/neoforge.mods.toml": [
             'side="BOTH"',
             'modId="sodium"',
@@ -36,6 +47,8 @@ def main() -> int:
         "src/main/java/me/cortex/voxy/server/VoxyServerInstance.java": ["net.minecraft.client", "me.cortex.voxy.client"],
         "src/main/java/me/cortex/voxy/server/VoxyServerLifecycle.java": ["net.minecraft.client", "me.cortex.voxy.client"],
         "src/main/java/me/cortex/voxy/server/VoxyServerCommands.java": ["net.minecraft.client", "me.cortex.voxy.client"],
+        "src/main/java/me/cortex/voxy/server/VoxyServerNetwork.java": ["net.minecraft.client", "me.cortex.voxy.client"],
+        "src/main/java/me/cortex/voxy/network/VoxyPayloads.java": ["net.minecraft.client", "me.cortex.voxy.client"],
     }
 
     failures = []

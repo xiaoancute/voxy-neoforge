@@ -34,6 +34,10 @@ public class VoxyNeoForgeConfig {
             .comment("Enable automatic chunk data ingestion for LOD generation")
             .define("ingestEnabled", true);
 
+    private static final ModConfigSpec.BooleanValue USE_SERVER_LOD = BUILDER
+            .comment("Download missing LOD sections from compatible Voxy servers")
+            .define("useServerLod", true);
+
     // Performance settings
     private static final ModConfigSpec.IntValue SECTION_RENDER_DISTANCE = BUILDER
             .comment("LOD section render distance (multiplied by 32 for actual chunk distance)",
@@ -110,6 +114,7 @@ public class VoxyNeoForgeConfig {
         VoxyConfig.CONFIG.enabled = ENABLED.get();
         VoxyConfig.CONFIG.enableRendering = ENABLE_RENDERING.get();
         VoxyConfig.CONFIG.ingestEnabled = INGEST_ENABLED.get();
+        VoxyConfig.CONFIG.useServerLod = USE_SERVER_LOD.get();
         VoxyConfig.CONFIG.sectionRenderDistance = SECTION_RENDER_DISTANCE.get();
         VoxyConfig.CONFIG.simulatedContraptionRenderDistancePercent = SIMULATED_CONTRAPTION_RENDER_DISTANCE_PERCENT.get();
         VoxyConfig.CONFIG.serviceThreads = SERVICE_THREADS.get();

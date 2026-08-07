@@ -6,6 +6,7 @@ import me.cortex.voxy.client.core.gl.Capabilities;
 import me.cortex.voxy.client.core.model.bakery.BudgetBufferRenderer;
 import me.cortex.voxy.client.core.rendering.util.SharedIndexBuffer;
 import me.cortex.voxy.client.config.VoxyConfig;
+import me.cortex.voxy.client.network.VoxyClientNetwork;
 import me.cortex.voxy.common.Logger;
 import me.cortex.voxy.commonImpl.VoxyCommon;
 import net.minecraft.ChatFormatting;
@@ -115,7 +116,7 @@ public class VoxyClient {
 
     public static String getRendererStatus() {
         var client = Minecraft.getInstance();
-        String baseStatus = getConfigStatus() + "," + getInstanceStatus();
+        String baseStatus = getConfigStatus() + "," + getInstanceStatus() + "," + VoxyClientNetwork.getStatus();
         if (client.levelRenderer == null) {
             return baseStatus + ",levelRenderer=null";
         }
@@ -132,6 +133,7 @@ public class VoxyClient {
                 + "enabled=" + config.enabled
                 + ",rendering=" + config.enableRendering
                 + ",ingest=" + config.ingestEnabled
+                + ",serverLod=" + config.useServerLod
                 + ",renderDistance=" + config.sectionRenderDistance
                 + ",autoLodRecovery=" + config.autoLodRecovery
                 + ",sodiumBuilderThreads=" + (!config.dontUseSodiumBuilderThreads)

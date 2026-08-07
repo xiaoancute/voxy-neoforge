@@ -10,6 +10,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
@@ -41,10 +42,16 @@ public final class VoxyServerLifecycle {
 
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
+        VoxyServerNetwork.clearClients();
         if (VoxyCommon.getInstance() instanceof VoxyServerInstance) {
             VoxyCommon.shutdownInstance();
             Logger.info("Voxy dedicated server companion stopped");
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        VoxyServerNetwork.removeClient(event.getEntity().getUUID());
     }
 
     @SubscribeEvent

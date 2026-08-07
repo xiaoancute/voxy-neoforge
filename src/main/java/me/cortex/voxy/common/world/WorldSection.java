@@ -1,6 +1,7 @@
 package me.cortex.voxy.common.world;
 
 
+import me.cortex.voxy.common.world.other.Mapper;
 import me.cortex.voxy.commonImpl.VoxyCommon;
 
 import java.lang.invoke.MethodHandles;
@@ -231,6 +232,19 @@ public final class WorldSection {
         this.assertNotFree();
         if ((cache.length-dstOffset) < this.data.length) throw new IllegalArgumentException();
         System.arraycopy(this.data, 0, cache, dstOffset, this.data.length);
+    }
+
+    /** Replaces this section with data received from a remote Voxy server. */
+    public void applyRemoteData(long[] mappedData, byte nonEmptyChildren) {
+        if (mappedData.length != SECTION_VOLUME) throw new IllegalArgumentException("Invalid remote section size");
+        this.assertNotFree();
+        System.arraycopy(mappedData, 0, this.data, 0, SECTION_VOLUME);
+        this.nonEmptyChildren = nonEmptyChildren;
+        if (this.lvl == 0) {
+            int nonEmpty = 0;
+            for (long value : this.data) nonEmpty += Mapper.isAir(value) ? 0 : 1;
+            this.nonEmptyBlockCount = nonEmpty;
+        }
     }
 
     public static int getChildIndex(int x, int y, int z) {

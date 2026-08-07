@@ -38,8 +38,8 @@ import java.util.function.Consumer;
 //There are independent mappings for biome and block states, these get combined in the shader and allow for more
 // variaty of things
 public class Mapper {
-    private static final int BLOCK_STATE_TYPE = 1;
-    private static final int BIOME_TYPE = 2;
+    public static final int BLOCK_STATE_TYPE = 1;
+    public static final int BIOME_TYPE = 2;
 
     private final IMappingStorage storage;
     public static final long UNKNOWN_MAPPING = -1;
@@ -267,6 +267,19 @@ public class Mapper {
             entry = this.registerNewBiome(biomeId);
         }
         return entry.id;
+    }
+
+    /** Imports a server mapping and returns this world's local id for the same state. */
+    public int importBlockStateMapping(int remoteId, byte[] serialized) {
+        if (remoteId == 0) return 0;
+        StateEntry remote = StateEntry.deserialize(remoteId, serialized, new boolean[1]);
+        return getIdForBlockState(remote.state);
+    }
+
+    /** Imports a server biome mapping and returns this world's local id for the same biome. */
+    public int importBiomeMapping(int remoteId, byte[] serialized) {
+        BiomeEntry remote = BiomeEntry.deserialize(remoteId, serialized);
+        return registerNewBiome(remote.biome).id;
     }
 
     public static long composeMappingId(byte light, int blockId, int biomeId) {

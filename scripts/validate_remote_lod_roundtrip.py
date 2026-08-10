@@ -64,6 +64,21 @@ def main():
         "SQLite JDBC on the NeoForge dev runtime classpath",
         failures)
     require(
+        "build.gradle",
+        'additionalRuntimeClasspath "org.lwjgl:lwjgl:$lwjglVersion:natives-linux"',
+        "LWJGL core native on the dedicated-server dev runtime classpath",
+        failures)
+    require(
+        "build.gradle",
+        'lwjglNativesRaw "org.lwjgl:lwjgl:$lwjglVersion:natives-linux"',
+        "LWJGL core native in the production mod JAR",
+        failures)
+    require(
+        "scripts/ci_remote_lod_roundtrip.sh",
+        'Exception in thread \\"Dedicated Voxy Worker',
+        "early dedicated-server worker failure detection",
+        failures)
+    require(
         ".github/workflows/remote-lod-roundtrip.yml",
         "bash scripts/ci_remote_lod_roundtrip.sh",
         "GitHub Actions roundtrip execution",

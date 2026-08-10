@@ -95,6 +95,11 @@ while kill -0 "$client_pid" 2>/dev/null && kill -0 "$server_pid" 2>/dev/null; do
         tail -240 "$client_log"
         exit 1
     fi
+    if grep -Eiq "(Failed to locate library: liblwjgl|Exception in thread \"Dedicated Voxy Worker)" "$server_log"; then
+        echo "Dedicated server failed while generating remote LOD data"
+        tail -240 "$server_log"
+        exit 1
+    fi
     if grep -Eiq "(NoClassDefFoundError|Mixin apply failed|InvalidMixinException|Failed to start Minecraft|Crash report saved|Connection refused|Failed to connect)" "$client_log"; then
         echo "Client failed before remote LOD cache write"
         tail -240 "$client_log"

@@ -527,8 +527,10 @@ configurations {
 
 dependencies {
     // Download natives for repackaging (module-info.class will be stripped)
+    lwjglNativesRaw "org.lwjgl:lwjgl:$lwjglVersion:natives-windows"
     lwjglNativesRaw "org.lwjgl:lwjgl-lmdb:$lwjglVersion:natives-windows"
     lwjglNativesRaw "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-windows"
+    lwjglNativesRaw "org.lwjgl:lwjgl:$lwjglVersion:natives-linux"
     lwjglNativesRaw "org.lwjgl:lwjgl-lmdb:$lwjglVersion:natives-linux"
     lwjglNativesRaw "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-linux"
 
@@ -639,8 +641,10 @@ dependencies {
     // Natives also need to be on runtime classpath (LWJGL extracts from classpath)
     additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion:natives-windows"
     additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-windows"
+    additionalRuntimeClasspath "org.lwjgl:lwjgl:$lwjglVersion:natives-windows"
     additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion:natives-linux"
     additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-linux"
+    additionalRuntimeClasspath "org.lwjgl:lwjgl:$lwjglVersion:natives-linux"
 
     // === JarJar Bundled Dependencies (full feature parity) ===
 

@@ -674,6 +674,12 @@ dependencies {
             prefer '3.49.1.0'
         }
     }
+
+    // JarJar dependencies are bundled in production, but NeoForge dev runs need
+    // them explicitly on the classpath for runClient and runServer.
+    additionalRuntimeClasspath 'org.rocksdb:rocksdbjni:10.9.1'
+    additionalRuntimeClasspath 'redis.clients:jedis:5.1.0'
+    additionalRuntimeClasspath 'org.xerial:sqlite-jdbc:3.49.1.0'
     //implementation 'org.rocksdb:rocksdbjni:8.10.0'
     //implementation 'redis.clients:jedis:5.1.0'
 }

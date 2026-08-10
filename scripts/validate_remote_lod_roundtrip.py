@@ -49,6 +49,21 @@ def main():
         "first-run onboarding bypass",
         failures)
     require(
+        "build.gradle",
+        "additionalRuntimeClasspath 'org.rocksdb:rocksdbjni:10.9.1'",
+        "RocksDB on the NeoForge dev runtime classpath",
+        failures)
+    require(
+        "build.gradle",
+        "additionalRuntimeClasspath 'redis.clients:jedis:5.1.0'",
+        "Jedis on the NeoForge dev runtime classpath",
+        failures)
+    require(
+        "build.gradle",
+        "additionalRuntimeClasspath 'org.xerial:sqlite-jdbc:3.49.1.0'",
+        "SQLite JDBC on the NeoForge dev runtime classpath",
+        failures)
+    require(
         ".github/workflows/remote-lod-roundtrip.yml",
         "bash scripts/ci_remote_lod_roundtrip.sh",
         "GitHub Actions roundtrip execution",

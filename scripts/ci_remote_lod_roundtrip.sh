@@ -24,6 +24,11 @@ trap cleanup EXIT
 
 mkdir -p "$log_dir" runs/server runs/client
 printf 'eula=true\n' > runs/server/eula.txt
+cat > runs/client/options.txt <<EOF
+onboardAccessibility:false
+skipMultiplayerWarning:true
+tutorialStep:none
+EOF
 cat > runs/server/server.properties <<EOF
 allow-flight=true
 enable-command-block=false

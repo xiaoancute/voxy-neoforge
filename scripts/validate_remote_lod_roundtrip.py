@@ -44,6 +44,11 @@ def main():
         "RCON block mutation",
         failures)
     require(
+        "scripts/ci_remote_lod_roundtrip.sh",
+        "onboardAccessibility:false",
+        "first-run onboarding bypass",
+        failures)
+    require(
         ".github/workflows/remote-lod-roundtrip.yml",
         "bash scripts/ci_remote_lod_roundtrip.sh",
         "GitHub Actions roundtrip execution",

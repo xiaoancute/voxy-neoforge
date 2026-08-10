@@ -409,6 +409,18 @@ task validateServerBoundary(type: Exec) {
     commandLine 'python3', 'scripts/validate_server_boundary.py'
 }
 
+tasks.register('validateServerArtifact', Exec) {
+    description = 'Validates bundled server libraries and native files in the production mod JAR'
+    group = 'verification'
+
+    dependsOn jar
+    def artifact = tasks.named('jar', Jar).flatMap { it.archiveFile }
+    inputs.file(artifact)
+    doFirst {
+        commandLine 'python3', 'scripts/validate_server_artifact.py', artifact.get().asFile.absolutePath
+    }
+}
+
 // Validate mixin configurations after JAR creation
 task validateMixins(type: Exec) {
     dependsOn jar
@@ -440,6 +452,7 @@ compileJava.dependsOn validateRocksdbLifecycle // Before compilation (storage li
 compileJava.dependsOn validateMixinSignatures   // Before compilation (signature check)
 compileJava.dependsOn validateServerBoundary    // Before compilation (dedicated-server boundary check)
 build.dependsOn validateMixins                   // After JAR creation (content check)
+build.dependsOn validateServerArtifact           // After JAR creation (server packaging check)
 
 
 

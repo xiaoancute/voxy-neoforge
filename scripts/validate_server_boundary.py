@@ -40,6 +40,10 @@ def main() -> int:
             'modId="sodium"',
             'side="CLIENT"',
         ],
+        "build.gradle": [
+            "build.dependsOn validateServerArtifact",
+            "scripts/validate_server_artifact.py",
+        ],
     }
     forbidden = {
         "src/main/java/me/cortex/voxy/Voxy.java": [

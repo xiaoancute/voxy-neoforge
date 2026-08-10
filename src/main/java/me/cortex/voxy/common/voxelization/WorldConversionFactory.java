@@ -161,6 +161,24 @@ public class WorldConversionFactory {
                                            PalettedContainer<BlockState> blockContainer,
                                            PalettedContainerRO<Holder<Biome>> biomeContainer,
                                            ILightingSupplier lightSupplier) {
+        return convert(section, stateMapper, blockContainer, biomeContainer::get, lightSupplier);
+    }
+
+    public static VoxelizedSection convert(VoxelizedSection section,
+                                           Mapper stateMapper,
+                                           PalettedContainer<BlockState> blockContainer,
+                                           Holder<Biome>[] biomeSnapshot,
+                                           ILightingSupplier lightSupplier) {
+        if (biomeSnapshot.length != 64) throw new IllegalArgumentException("Invalid biome snapshot size");
+        return convert(section, stateMapper, blockContainer,
+                (x, y, z) -> biomeSnapshot[(y << 4) | (z << 2) | x], lightSupplier);
+    }
+
+    private static VoxelizedSection convert(VoxelizedSection section,
+                                            Mapper stateMapper,
+                                            PalettedContainer<BlockState> blockContainer,
+                                            BiomeLookup biomeLookup,
+                                            ILightingSupplier lightSupplier) {
 
         //Cheat by creating a local pallet then read the data directly
 
@@ -191,7 +209,7 @@ public class WorldConversionFactory {
             for (int y = 0; y < 4; y++) {
                 for (int z = 0; z < 4; z++) {
                     for (int x = 0; x < 4; x++) {
-                        biomes[i++] = stateMapper.getIdForBiome(biomeContainer.get(x, y, z));
+                        biomes[i++] = stateMapper.getIdForBiome(biomeLookup.get(x, y, z));
                     }
                 }
             }
@@ -247,6 +265,11 @@ public class WorldConversionFactory {
         }
         section.lvl0NonAirCount = nonZeroCnt;
         return section;
+    }
+
+    @FunctionalInterface
+    private interface BiomeLookup {
+        Holder<Biome> get(int x, int y, int z);
     }
 
 

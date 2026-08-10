@@ -50,7 +50,7 @@ Auto LOD Recovery is enabled by default. If distant chunks become overly simple 
 
 ## Dedicated Server
 
-The same jar can now be installed on a NeoForge 1.21.1 dedicated server. The server does not load Sodium, Iris, or OpenGL rendering code. It converts complete chunks into Voxy LOD data in the background and stores them under `<world>/voxy/server/`.
+The same jar can now be installed on a NeoForge 1.21.1 dedicated server. The server does not load Sodium, Iris, or OpenGL rendering code. It snapshots complete chunk palettes and lighting before background conversion, then stores Voxy LOD data under `<world>/voxy/server/`.
 
 Server settings live in the world's `serverconfig/voxy-server.toml`:
 

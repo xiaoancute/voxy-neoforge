@@ -50,7 +50,7 @@ Alpha，但在当前测试栈上可以正常使用。
 
 ## 专用服务器
 
-同一个 jar 现在可以安装在 NeoForge 1.21.1 专用服务器上。服务端不加载 Sodium、Iris 或任何 OpenGL 渲染代码，而是在后台把新生成的完整区块转换成 Voxy LOD，并保存到 `<世界目录>/voxy/server/`。
+同一个 jar 现在可以安装在 NeoForge 1.21.1 专用服务器上。服务端不加载 Sodium、Iris 或任何 OpenGL 渲染代码；完整区块的 palette 和光照会先制作快照，再在后台转换成 Voxy LOD，并保存到 `<世界目录>/voxy/server/`。
 
 服务端配置位于世界的 `serverconfig/voxy-server.toml`：
 

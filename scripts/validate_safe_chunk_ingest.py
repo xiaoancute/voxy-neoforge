@@ -44,8 +44,16 @@ def main() -> int:
         require(sodium_rsm, "if (chunk != null)", "Sodium section unload ingest must skip missing chunks")
         reject(sodium_rsm, "this.level.getChunk(x,z).getSection", "Sodium section unload ingest must not blindly fetch by x/z")
 
-        require(ingest_service, "engine.acquireRef();", "queued ingest work must retain its world engine")
+        reject(ingest_service, "WorldEngine world, LevelChunkSection section", "queued ingest work must not retain a mutable chunk section")
+        require(ingest_service, "section.getStates().copy()", "queued ingest work must copy the block-state palette")
+        require(ingest_service, "copyBiomes(section)", "queued ingest work must snapshot biome holders")
+        require(ingest_service, "blockLight == null ? null : blockLight.copy()", "queued ingest work must copy block light")
+        require(ingest_service, "skyLight == null ? null : skyLight.copy()", "queued ingest work must copy sky light")
+        require(ingest_service, "section.acquire();", "section snapshots must acquire the palette lock")
+        require(ingest_service, "section.release();", "section snapshots must release the palette lock")
+        require(ingest_service, "task.world.acquireRef();", "queued ingest work must retain its world engine")
         require(ingest_service, "task.world.releaseRef();", "completed ingest work must release its world engine")
+        require(ingest_service, "if (this.ingestQueue.remove(task)) task.world.releaseRef();", "failed scheduling must remove its queued task before releasing the world")
         require(ingest_service, "while (!this.ingestQueue.isEmpty())", "shutdown must drain unscheduled ingest references")
         require(ingest_service, "this.ingestQueue.pop().world.releaseRef();", "shutdown must release queued world references")
 

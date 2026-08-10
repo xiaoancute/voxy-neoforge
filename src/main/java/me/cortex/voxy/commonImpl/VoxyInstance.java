@@ -168,6 +168,10 @@ public abstract class VoxyInstance {
 
     protected abstract SectionStorage createStorage(WorldIdentifier identifier);
 
+    /** Hook for side-specific world observers such as the dedicated-server network bridge. */
+    protected void onWorldCreated(WorldIdentifier identifier, WorldEngine world) {
+    }
+
     private WorldEngine createWorld(WorldIdentifier identifier) {
         if (!this.isRunning) {
             throw new IllegalStateException("Cannot create world while not running");
@@ -177,6 +181,7 @@ public abstract class VoxyInstance {
         }
         Logger.info("Creating new world engine: " + identifier.getLongHash() + "@" + System.identityHashCode(this));
         var world = new WorldEngine(this.createStorage(identifier), this);
+        this.onWorldCreated(identifier, world);
         world.setSaveCallback(this.savingService::enqueueSave);
         this.activeWorlds.put(identifier, world);
         return world;

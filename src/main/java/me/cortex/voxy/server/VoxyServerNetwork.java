@@ -9,26 +9,34 @@ import me.cortex.voxy.commonImpl.VoxyCommon;
 import me.cortex.voxy.commonImpl.WorldIdentifier;
 import me.cortex.voxy.network.VoxyPayloads;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.LongAdder;
 
 @EventBusSubscriber(modid = "voxy", value = Dist.DEDICATED_SERVER, bus = EventBusSubscriber.Bus.MOD)
 public final class VoxyServerNetwork {
     private static final Map<UUID, ClientState> CLIENTS = new ConcurrentHashMap<>();
+    private static final Map<String, Set<Long>> INVALIDATIONS = new ConcurrentHashMap<>();
+    private static final AtomicBoolean INVALIDATION_FLUSH_SCHEDULED = new AtomicBoolean();
     private static final LongAdder REQUESTED = new LongAdder();
     private static final LongAdder SERVED = new LongAdder();
     private static final LongAdder MISSING = new LongAdder();
     private static final LongAdder REJECTED = new LongAdder();
     private static final LongAdder BYTES = new LongAdder();
+    private static final LongAdder INVALIDATED = new LongAdder();
+    private static final LongAdder INVALIDATION_PACKETS = new LongAdder();
 
     private VoxyServerNetwork() {}
 
@@ -39,6 +47,7 @@ public final class VoxyServerNetwork {
         registrar.playToServer(VoxyPayloads.Request.TYPE, VoxyPayloads.Request.STREAM_CODEC, VoxyServerNetwork::handleRequest);
         registrar.playToClient(VoxyPayloads.HelloResponse.TYPE, VoxyPayloads.HelloResponse.STREAM_CODEC, (payload, context) -> {});
         registrar.playToClient(VoxyPayloads.Response.TYPE, VoxyPayloads.Response.STREAM_CODEC, (payload, context) -> {});
+        registrar.playToClient(VoxyPayloads.Invalidate.TYPE, VoxyPayloads.Invalidate.STREAM_CODEC, (payload, context) -> {});
     }
 
     private static void handleHello(VoxyPayloads.Hello payload, IPayloadContext context) {
@@ -51,7 +60,8 @@ public final class VoxyServerNetwork {
         context.reply(new VoxyPayloads.HelloResponse(
                 VoxyPayloads.PROTOCOL_VERSION,
                 accepted,
-                VoxyPayloads.MAX_REQUEST_SECTIONS));
+                VoxyPayloads.MAX_REQUEST_SECTIONS,
+                VoxyServerConfig.maxRemoteRequestsPerSecond()));
     }
 
     private static void handleRequest(VoxyPayloads.Request payload, IPayloadContext context) {
@@ -157,6 +167,58 @@ public final class VoxyServerNetwork {
 
     public static void clearClients() {
         CLIENTS.clear();
+        INVALIDATIONS.clear();
+        INVALIDATION_FLUSH_SCHEDULED.set(false);
+    }
+
+    public static void queueInvalidation(MinecraftServer server, String dimension, long key) {
+        if (CLIENTS.values().stream().noneMatch(client -> client.enabled)) return;
+        INVALIDATIONS.computeIfAbsent(dimension, ignored -> ConcurrentHashMap.newKeySet()).add(key);
+        scheduleInvalidationFlush(server);
+    }
+
+    private static void scheduleInvalidationFlush(MinecraftServer server) {
+        if (INVALIDATION_FLUSH_SCHEDULED.compareAndSet(false, true)) {
+            server.execute(() -> flushInvalidations(server));
+        }
+    }
+
+    private static void flushInvalidations(MinecraftServer server) {
+        int batchesRemaining = 16;
+        try {
+            for (var entry : INVALIDATIONS.entrySet()) {
+                Set<Long> pending = entry.getValue();
+                while (!pending.isEmpty() && batchesRemaining-- > 0) {
+                    long[] keys = takeInvalidations(pending);
+                    if (keys.length == 0) break;
+                    var payload = new VoxyPayloads.Invalidate(entry.getKey(), keys);
+                    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                        ClientState state = CLIENTS.get(player.getUUID());
+                        if (state != null && state.enabled
+                                && player.level().dimension().location().toString().equals(entry.getKey())) {
+                            PacketDistributor.sendToPlayer(player, payload);
+                            INVALIDATION_PACKETS.increment();
+                        }
+                    }
+                    INVALIDATED.add(keys.length);
+                }
+                if (pending.isEmpty()) INVALIDATIONS.remove(entry.getKey(), pending);
+                if (batchesRemaining <= 0) break;
+            }
+        } finally {
+            INVALIDATION_FLUSH_SCHEDULED.set(false);
+            if (!INVALIDATIONS.isEmpty()) scheduleInvalidationFlush(server);
+        }
+    }
+
+    private static long[] takeInvalidations(Set<Long> pending) {
+        long[] scratch = new long[Math.min(VoxyPayloads.MAX_INVALIDATION_SECTIONS, pending.size())];
+        int count = 0;
+        for (Long key : pending) {
+            if (count >= scratch.length) break;
+            if (pending.remove(key)) scratch[count++] = key;
+        }
+        return count == scratch.length ? scratch : java.util.Arrays.copyOf(scratch, count);
     }
 
     public static String getStatus() {
@@ -165,7 +227,9 @@ public final class VoxyServerNetwork {
                 + ",served=" + SERVED.sum()
                 + ",missing=" + MISSING.sum()
                 + ",rejected=" + REJECTED.sum()
-                + ",sentBytes=" + BYTES.sum();
+                + ",sentBytes=" + BYTES.sum()
+                + ",invalidated=" + INVALIDATED.sum()
+                + ",invalidationPackets=" + INVALIDATION_PACKETS.sum();
     }
 
     private static final class ClientState {

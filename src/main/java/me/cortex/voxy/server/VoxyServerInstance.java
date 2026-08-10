@@ -6,6 +6,7 @@ import me.cortex.voxy.common.config.section.SectionStorage;
 import me.cortex.voxy.common.config.section.SectionStorageConfig;
 import me.cortex.voxy.commonImpl.VoxyInstance;
 import me.cortex.voxy.commonImpl.WorldIdentifier;
+import me.cortex.voxy.common.world.WorldEngine;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -41,6 +42,16 @@ public final class VoxyServerInstance extends VoxyInstance {
         context.setProperty(ConfigBuildCtx.WORLD_IDENTIFIER, identifier.getWorldId());
         context.pushPath(ConfigBuildCtx.DEFAULT_STORAGE_PATH);
         return this.storageConfig.build(context);
+    }
+
+    @Override
+    protected void onWorldCreated(WorldIdentifier identifier, WorldEngine world) {
+        String dimension = identifier.key.location().toString();
+        world.setDirtyCallback((section, updateFlags, neighborMask) -> {
+            if ((updateFlags & (WorldEngine.UPDATE_TYPE_BLOCK_BIT | WorldEngine.UPDATE_TYPE_CHILD_EXISTENCE_BIT)) != 0) {
+                VoxyServerNetwork.queueInvalidation(this.server, dimension, section.key);
+            }
+        });
     }
 
     @Override

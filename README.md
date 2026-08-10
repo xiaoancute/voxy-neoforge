@@ -61,7 +61,7 @@ Server settings live in the world's `serverconfig/voxy-server.toml`:
 - `serveRemoteLod` lets compatible Voxy clients download missing cached sections.
 - `maxRemoteRequestsPerSecond` and `maxRemoteResponseBytes` bound per-player request rate and response size.
 
-Administrators can run `/voxy server status` to inspect the cache path plus ingestion and network counters. Compatible clients negotiate protocol support, request missing sections in small batches, remap the server's block and biome ids, and persist the result in their own local cache. Set the client `useServerLod` option or server `serveRemoteLod` option to `false` to disable this path.
+Administrators can run `/voxy server status` to inspect the cache path plus ingestion and network counters. Compatible clients negotiate protocol support, request missing sections in small batches, remap the server's block and biome ids, and persist the result in their own local cache. When server LOD data changes, compact invalidation batches remove stale client entries and refresh sections already used in the current session at the server-advertised request rate. Set the client `useServerLod` option or server `serveRemoteLod` option to `false` to disable this path.
 
 ## Known Compatibility
 
@@ -81,7 +81,7 @@ Mods not listed here are not automatically incompatible; they are just not main 
 
 - Iris shader shadows do not include Voxy LOD terrain.
 - Debug screen integration is currently disabled.
-- Remote LOD transfer is request-based; live push updates and cache invalidation are not implemented yet.
+- Remote updates use invalidation plus rate-limited re-fetching rather than pushing full section bodies immediately.
 
 ## Installation
 

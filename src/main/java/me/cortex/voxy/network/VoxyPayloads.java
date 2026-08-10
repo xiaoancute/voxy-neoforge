@@ -10,8 +10,9 @@ import java.util.List;
 
 /** Wire records shared by the physical client and dedicated server. */
 public final class VoxyPayloads {
-    public static final int PROTOCOL_VERSION = 1;
+    public static final int PROTOCOL_VERSION = 2;
     public static final int MAX_REQUEST_SECTIONS = 8;
+    public static final int MAX_INVALIDATION_SECTIONS = 64;
     public static final int MAX_RESPONSE_BYTES = 900_000;
     public static final int MAX_MAPPING_BYTES = 64_000;
     public static final ResourceLocation HELLO_ID = ResourceLocation.fromNamespaceAndPath("voxy", "lod_hello");
@@ -29,11 +30,16 @@ public final class VoxyPayloads {
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
-    public record HelloResponse(int protocol, boolean enabled, int maxSections) implements CustomPacketPayload {
+    public record HelloResponse(int protocol, boolean enabled, int maxSections, int maxRequestsPerSecond) implements CustomPacketPayload {
         public static final Type<HelloResponse> TYPE = new Type<>(HELLO_RESPONSE_ID);
         public static final StreamCodec<RegistryFriendlyByteBuf, HelloResponse> STREAM_CODEC = StreamCodec.of(
-                (buf, value) -> { buf.writeVarInt(value.protocol); buf.writeBoolean(value.enabled); buf.writeVarInt(value.maxSections); },
-                buf -> new HelloResponse(buf.readVarInt(), buf.readBoolean(), buf.readVarInt()));
+                (buf, value) -> {
+                    buf.writeVarInt(value.protocol);
+                    buf.writeBoolean(value.enabled);
+                    buf.writeVarInt(value.maxSections);
+                    buf.writeVarInt(value.maxRequestsPerSecond);
+                },
+                buf -> new HelloResponse(buf.readVarInt(), buf.readBoolean(), buf.readVarInt(), buf.readVarInt()));
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
@@ -53,6 +59,26 @@ public final class VoxyPayloads {
                     long[] keys = new long[count];
                     for (int i = 0; i < count; i++) keys[i] = buf.readLong();
                     return new Request(dimension, keys);
+                });
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
+    public record Invalidate(String dimension, long[] keys) implements CustomPacketPayload {
+        public static final Type<Invalidate> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("voxy", "lod_invalidate"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, Invalidate> STREAM_CODEC = StreamCodec.of(
+                (buf, value) -> {
+                    writeString(buf, value.dimension, 128);
+                    if (value.keys.length > MAX_INVALIDATION_SECTIONS) throw new IllegalArgumentException("Too many invalidations");
+                    buf.writeVarInt(value.keys.length);
+                    for (long key : value.keys) buf.writeLong(key);
+                },
+                buf -> {
+                    String dimension = readString(buf, 128);
+                    int count = buf.readVarInt();
+                    if (count < 0 || count > MAX_INVALIDATION_SECTIONS) throw new IllegalArgumentException("Too many invalidations");
+                    long[] keys = new long[count];
+                    for (int i = 0; i < count; i++) keys[i] = buf.readLong();
+                    return new Invalidate(dimension, keys);
                 });
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }

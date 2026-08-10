@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = "voxy", value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public final class VoxyClientNetwork {
@@ -37,15 +38,23 @@ public final class VoxyClientNetwork {
         thread.setDaemon(true);
         return thread;
     });
+    private static final ScheduledExecutorService REFRESHER = Executors.newSingleThreadScheduledExecutor(task -> {
+        Thread thread = new Thread(task, "Voxy remote LOD refreshes");
+        thread.setDaemon(true);
+        return thread;
+    });
     private static final LongAdder REQUESTED = new LongAdder();
     private static final LongAdder RECEIVED = new LongAdder();
     private static final LongAdder STORED = new LongAdder();
     private static final LongAdder REJECTED = new LongAdder();
     private static final LongAdder BYTES = new LongAdder();
+    private static final LongAdder INVALIDATED = new LongAdder();
 
     private static volatile ClientPacketListener activeConnection;
     private static volatile CompletableFuture<Boolean> handshake = new CompletableFuture<>();
     private static volatile int serverBatchSize = 1;
+    private static volatile int serverRequestRate = 1;
+    private static long nextRefreshNanos;
 
     private VoxyClientNetwork() {}
 
@@ -56,6 +65,7 @@ public final class VoxyClientNetwork {
         registrar.playToServer(VoxyPayloads.Request.TYPE, VoxyPayloads.Request.STREAM_CODEC, (payload, context) -> {});
         registrar.playToClient(VoxyPayloads.HelloResponse.TYPE, VoxyPayloads.HelloResponse.STREAM_CODEC, VoxyClientNetwork::handleHello);
         registrar.playToClient(VoxyPayloads.Response.TYPE, VoxyPayloads.Response.STREAM_CODEC, VoxyClientNetwork::handleResponse);
+        registrar.playToClient(VoxyPayloads.Invalidate.TYPE, VoxyPayloads.Invalidate.STREAM_CODEC, VoxyClientNetwork::handleInvalidation);
     }
 
     public static VoxyPayloads.Response requestSection(WorldIdentifier identifier, long key) {
@@ -111,6 +121,7 @@ public final class VoxyClientNetwork {
     private static void handleHello(VoxyPayloads.HelloResponse payload, IPayloadContext context) {
         boolean accepted = payload.protocol() == VoxyPayloads.PROTOCOL_VERSION && payload.enabled();
         serverBatchSize = Math.max(1, Math.min(VoxyPayloads.MAX_REQUEST_SECTIONS, payload.maxSections()));
+        serverRequestRate = Math.max(1, Math.min(512, payload.maxRequestsPerSecond()));
         handshake.complete(accepted);
     }
 
@@ -118,6 +129,25 @@ public final class VoxyClientNetwork {
         RECEIVED.increment();
         CompletableFuture<VoxyPayloads.Response> future = PENDING.remove(new SectionKey(payload.dimension(), payload.key()));
         if (future != null) future.complete(payload);
+    }
+
+    private static void handleInvalidation(VoxyPayloads.Invalidate payload, IPayloadContext context) {
+        INVALIDATED.add(payload.keys().length);
+        RemoteSectionStorage.handleInvalidation(payload);
+    }
+
+    public static void refreshSection(WorldIdentifier identifier, long key, Consumer<VoxyPayloads.Response> callback) {
+        long delay;
+        synchronized (VoxyClientNetwork.class) {
+            long now = System.nanoTime();
+            long target = Math.max(now, nextRefreshNanos);
+            delay = target - now;
+            nextRefreshNanos = target + Math.max(1L, 1_000_000_000L / serverRequestRate);
+        }
+        REFRESHER.schedule(() -> {
+            VoxyPayloads.Response response = requestSection(identifier, key);
+            Minecraft.getInstance().execute(() -> callback.accept(response));
+        }, delay, TimeUnit.NANOSECONDS);
     }
 
     private static void scheduleDrain() {
@@ -165,6 +195,8 @@ public final class VoxyClientNetwork {
         activeConnection = listener;
         handshake = new CompletableFuture<>();
         serverBatchSize = 1;
+        serverRequestRate = 1;
+        nextRefreshNanos = 0;
         PENDING.forEach((key, future) -> future.completeExceptionally(new IllegalStateException("Connection changed")));
         PENDING.clear();
         SEND_QUEUE.clear();
@@ -189,6 +221,7 @@ public final class VoxyClientNetwork {
                 + ",remoteReceived=" + RECEIVED.sum()
                 + ",remoteStored=" + STORED.sum()
                 + ",remoteRejected=" + REJECTED.sum()
+                + ",remoteInvalidated=" + INVALIDATED.sum()
                 + ",remoteBytes=" + BYTES.sum();
     }
 

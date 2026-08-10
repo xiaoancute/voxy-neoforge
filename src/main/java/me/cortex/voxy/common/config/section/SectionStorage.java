@@ -9,6 +9,10 @@ public abstract class SectionStorage implements IMappingStorage {
 
     public abstract void saveSection(WorldSection section);
 
+    /** Removes a persisted section so a remote provider can repopulate it. */
+    public void deleteSection(long key) {
+    }
+
     /** Called once after the owning world engine has constructed its Mapper. */
     public void setMapper(Mapper mapper) {
     }

@@ -25,10 +25,13 @@ def main() -> int:
             ".optional()",
             "maxRemoteRequestsPerSecond()",
             "maxRemoteResponseBytes()",
+            "queueInvalidation",
+            "VoxyPayloads.Invalidate",
         ],
         "src/main/java/me/cortex/voxy/network/VoxyPayloads.java": [
             "PROTOCOL_VERSION",
             "MAX_REQUEST_SECTIONS",
+            "MAX_INVALIDATION_SECTIONS",
             "MAX_RESPONSE_BYTES",
         ],
         "src/main/resources/META-INF/neoforge.mods.toml": [

@@ -66,6 +66,7 @@ class MixinConfigValidator:
         with open('src/main/resources/common.voxy.mixins.json') as f:
             common_config = json.load(f)
             common_mixins = set(common_config.get('mixins', []))
+            common_mixins.update(common_config.get('server', []))
         
         # Find all mixin source files
         client_files = set()

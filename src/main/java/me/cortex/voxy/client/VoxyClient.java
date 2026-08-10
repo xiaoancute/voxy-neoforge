@@ -7,6 +7,7 @@ import me.cortex.voxy.client.core.model.bakery.BudgetBufferRenderer;
 import me.cortex.voxy.client.core.rendering.util.SharedIndexBuffer;
 import me.cortex.voxy.client.config.VoxyConfig;
 import me.cortex.voxy.client.network.VoxyClientNetwork;
+import me.cortex.voxy.client.network.RemoteLodCiProbe;
 import me.cortex.voxy.common.Logger;
 import me.cortex.voxy.commonImpl.VoxyCommon;
 import net.minecraft.ChatFormatting;
@@ -77,6 +78,7 @@ public class VoxyClient {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
+        RemoteLodCiProbe.tick();
         if (!rendererRefreshQueued) {
             return;
         }

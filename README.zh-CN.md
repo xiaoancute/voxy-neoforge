@@ -61,7 +61,7 @@ Alpha，但在当前测试栈上可以正常使用。
 - `serveRemoteLod` 控制是否允许兼容的 Voxy 客户端下载缺失缓存。
 - `maxRemoteRequestsPerSecond` 与 `maxRemoteResponseBytes` 限制每位玩家的请求速率和单包响应大小。
 
-管理员可使用 `/voxy server status` 查看缓存路径、采集计数和网络统计。兼容客户端会先协商协议，再批量请求缺失 section，把服务端方块/生物群系映射转换成本地编号并写入自己的缓存。服务端 LOD 变化时会批量发送轻量失效通知，客户端删除旧条目，并按服务端公布的请求速率刷新本次会话用过的 section。客户端可关闭 `useServerLod`，服务端也可关闭 `serveRemoteLod`。
+管理员可使用 `/voxy server status` 查看缓存路径、采集计数和网络统计。兼容客户端会先协商协议，再批量请求缺失 section，把服务端方块/生物群系映射转换成本地编号并写入自己的缓存。专用服务器会按 chunk section 合并运行中的方块变化，再抓取新的方块 palette、生物群系和光照快照；由此产生的 LOD 变化会批量发送轻量失效通知，客户端删除旧条目，并按服务端公布的请求速率刷新本次会话用过的 section。客户端可关闭 `useServerLod`，服务端也可关闭 `serveRemoteLod`。
 
 ## 已知兼容性
 

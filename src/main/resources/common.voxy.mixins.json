@@ -7,5 +7,8 @@
   },
   "mixins": [
     "minecraft.MixinWorld"
+  ],
+  "server": [
+    "minecraft.MixinServerWorld"
   ]
 }

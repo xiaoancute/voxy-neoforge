@@ -213,6 +213,10 @@ public final class VoxyClientNetwork {
         REJECTED.increment();
     }
 
+    static long requestedSections() { return REQUESTED.sum(); }
+    static long storedSections() { return STORED.sum(); }
+    static long invalidatedSections() { return INVALIDATED.sum(); }
+
     public static String getStatus() {
         boolean enabled = handshake.isDone() && handshake.getNow(false);
         return "remoteLod=" + enabled

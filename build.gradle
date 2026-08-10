@@ -163,6 +163,11 @@ neoForge {
         client {
             client()
             gameDirectory.set(layout.projectDirectory.dir("runs/client"))
+            def ciMultiplayerAddress = System.getenv("VOXY_CI_MULTIPLAYER_ADDRESS")
+            if (ciMultiplayerAddress) {
+                programArgument '--quickPlayMultiplayer'
+                programArgument ciMultiplayerAddress
+            }
         }
         server {
             server()

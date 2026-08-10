@@ -1,0 +1,57 @@
+name: Remote LOD Roundtrip
+
+on:
+  push:
+    branches:
+      - neoforge-1.21.1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  remote-lod-roundtrip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install headless OpenGL packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb mesa-utils libgl1-mesa-dri libglx-mesa0
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate roundtrip wiring
+        run: python3 scripts/validate_remote_lod_roundtrip.py
+
+      - name: Run client-server remote LOD roundtrip
+        run: bash scripts/ci_remote_lod_roundtrip.sh
+        env:
+          GITHUB_ACTIONS: true
+          VOXY_REMOTE_LOD_TIMEOUT: 720
+
+      - name: Upload roundtrip logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: remote-lod-roundtrip-logs
+          path: |
+            build/remote-lod-roundtrip/**
+            runs/client/logs/**
+            runs/client/crash-reports/**
+            runs/server/logs/**
+            runs/server/crash-reports/**
+          retention-days: 7

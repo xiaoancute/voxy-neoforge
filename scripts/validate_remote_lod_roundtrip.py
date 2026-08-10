@@ -29,6 +29,11 @@ def main():
         "live section snapshot ingestion",
         failures)
     require(
+        "src/main/java/me/cortex/voxy/server/VoxyServerLifecycle.java",
+        "onServerAboutToStart(ServerAboutToStartEvent event)",
+        "server instance initialization before spawn chunk loading",
+        failures)
+    require(
         "src/main/java/me/cortex/voxy/client/network/RemoteLodCiProbe.java",
         "engine.acquireIfExists(key)",
         "real section storage read",
@@ -77,6 +82,11 @@ def main():
         "scripts/ci_remote_lod_roundtrip.sh",
         'Exception in thread \\"Dedicated Voxy Worker',
         "early dedicated-server worker failure detection",
+        failures)
+    require(
+        "scripts/ci_remote_lod_roundtrip.sh",
+        '"voxy server status" >"$status_log" || true',
+        "server status capture on probe failure",
         failures)
     require(
         ".github/workflows/remote-lod-roundtrip.yml",

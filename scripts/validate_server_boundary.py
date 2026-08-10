@@ -16,6 +16,7 @@ def main() -> int:
         ],
         "src/main/java/me/cortex/voxy/server/VoxyServerLifecycle.java": [
             "Dist.DEDICATED_SERVER",
+            "ServerAboutToStartEvent",
             "ServerStartedEvent",
             "ServerStoppingEvent",
             "ChunkEvent.Load",

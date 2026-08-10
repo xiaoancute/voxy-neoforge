@@ -92,6 +92,8 @@ while kill -0 "$client_pid" 2>/dev/null && kill -0 "$server_pid" 2>/dev/null; do
     fi
     if grep -q "VOXY_REMOTE_LOD_PROBE failed" "$client_log"; then
         echo "Remote LOD client probe failed before cache write"
+        python3 scripts/ci_rcon.py 127.0.0.1 25575 "$rcon_password" "voxy server status" >"$status_log" || true
+        cat "$status_log" 2>/dev/null || true
         tail -240 "$client_log"
         exit 1
     fi

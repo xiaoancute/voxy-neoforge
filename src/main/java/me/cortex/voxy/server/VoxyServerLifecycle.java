@@ -16,6 +16,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
@@ -40,7 +41,7 @@ public final class VoxyServerLifecycle {
     }
 
     @SubscribeEvent
-    public static void onServerStarted(ServerStartedEvent event) {
+    public static void onServerAboutToStart(ServerAboutToStartEvent event) {
         if (!VoxyCommon.isAvailable()) {
             VoxyCommon.setInstanceFactory(() -> new VoxyServerInstance(event.getServer()));
         }
@@ -50,6 +51,13 @@ public final class VoxyServerLifecycle {
         }
         if (VoxyCommon.getInstance() == null) {
             VoxyCommon.createInstance();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerStarted(ServerStartedEvent event) {
+        if (!(VoxyCommon.getInstance() instanceof VoxyServerInstance)) {
+            return;
         }
         Logger.info("Voxy dedicated server companion initialized");
     }

@@ -43,6 +43,7 @@ def main() -> int:
         "build.gradle": [
             "build.dependsOn validateServerArtifact",
             "scripts/validate_server_artifact.py",
+            'jarJar(implementation("org.lwjgl:lwjgl:$lwjglVersion"))',
         ],
         "scripts/ci_server_smoke.sh": [
             "validateServerArtifact",

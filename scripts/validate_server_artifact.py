@@ -18,6 +18,7 @@ REQUIRED_ENTRIES = {
 }
 
 REQUIRED_JARJAR = {
+    ("org.lwjgl", "lwjgl"): "3.3.3",
     ("org.lwjgl", "lwjgl-lmdb"): "3.3.3",
     ("org.lwjgl", "lwjgl-zstd"): "3.3.3",
     ("org.rocksdb", "rocksdbjni"): "10.9.1",

@@ -634,8 +634,11 @@ tasks.named('jar') {
 dependencies {
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-    // LWJGL core - provided by Minecraft
-    implementation "org.lwjgl:lwjgl"
+    // LWJGL core is provided by the Minecraft client, but not by a dedicated
+    // server. Bundle it so the LMDB/Zstd modules and MemoryUtil can load there.
+    jarJar(implementation("org.lwjgl:lwjgl:$lwjglVersion")) {
+        version { strictly "[3.3.0,4.0.0)"; prefer "$lwjglVersion" }
+    }
 
     // LWJGL-LMDB and LWJGL-ZSTD - Required by Voxy, NOT provided by Minecraft
     // Reference: https://docs.neoforged.net/toolchain/docs/dependencies/nonmclibs/

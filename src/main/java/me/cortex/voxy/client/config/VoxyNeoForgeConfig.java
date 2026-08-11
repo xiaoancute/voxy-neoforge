@@ -16,7 +16,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
  *
  * This wraps the existing VoxyConfig and syncs values between the two systems.
  */
-@EventBusSubscriber(modid = "voxy", value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = "voxy", value = Dist.CLIENT)
 public class VoxyNeoForgeConfig {
 
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();

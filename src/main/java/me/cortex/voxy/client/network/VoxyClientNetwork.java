@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 
-@EventBusSubscriber(modid = "voxy", value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = "voxy", value = Dist.CLIENT)
 public final class VoxyClientNetwork {
     private static final ConcurrentHashMap<SectionKey, CompletableFuture<VoxyPayloads.Response>> PENDING = new ConcurrentHashMap<>();
     private static final ConcurrentLinkedQueue<SectionKey> SEND_QUEUE = new ConcurrentLinkedQueue<>();

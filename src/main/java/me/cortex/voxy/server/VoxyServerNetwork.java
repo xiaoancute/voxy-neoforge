@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.LongAdder;
 
-@EventBusSubscriber(modid = "voxy", value = Dist.DEDICATED_SERVER, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = "voxy", value = Dist.DEDICATED_SERVER)
 public final class VoxyServerNetwork {
     private static final Map<UUID, ClientState> CLIENTS = new ConcurrentHashMap<>();
     private static final Map<String, Set<Long>> INVALIDATIONS = new ConcurrentHashMap<>();

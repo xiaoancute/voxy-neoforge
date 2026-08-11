@@ -68,7 +68,11 @@ def main() -> int:
         "src/main/java/me/cortex/voxy/server/VoxyServerInstance.java": ["net.minecraft.client", "me.cortex.voxy.client"],
         "src/main/java/me/cortex/voxy/server/VoxyServerLifecycle.java": ["net.minecraft.client", "me.cortex.voxy.client"],
         "src/main/java/me/cortex/voxy/server/VoxyServerCommands.java": ["net.minecraft.client", "me.cortex.voxy.client"],
-        "src/main/java/me/cortex/voxy/server/VoxyServerNetwork.java": ["net.minecraft.client", "me.cortex.voxy.client"],
+        "src/main/java/me/cortex/voxy/server/VoxyServerNetwork.java": [
+            "net.minecraft.client",
+            "me.cortex.voxy.client",
+            "EventBusSubscriber.Bus",
+        ],
         "src/main/java/me/cortex/voxy/network/VoxyPayloads.java": ["net.minecraft.client", "me.cortex.voxy.client"],
     }
 

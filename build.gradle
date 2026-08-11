@@ -682,8 +682,13 @@ dependencies {
             prefer '5.1.0'
         }
     }
-    // commons-pool2 is a transitive dependency of jedis
-    implementation 'org.apache.commons:commons-pool2:2.12.0'
+    // JedisPool needs commons-pool2, and dedicated servers do not provide it.
+    jarJar(implementation('org.apache.commons:commons-pool2:2.12.0')) {
+        version {
+            strictly '[2.12.0, 3.0.0)'
+            prefer '2.12.0'
+        }
+    }
 
     // Distant Horizons import support. Do not bundle XZ: Distant Horizons exports
     // org.tukaani.xz and bundling it creates a JPMS split-package crash.

@@ -11,7 +11,7 @@ Voxy 是由 [MCRcortex](https://github.com/MCRcortex) 创作的 LOD 远景渲染
 这个 fork 主要做这些事：
 
 - 适配 NeoForge 1.21.1
-- 跟进 Sodium 0.8.12 的渲染接口变化
+- 跟进 Sodium 0.6.13 到 0.8.13 的渲染接口变化
 - 适配 Iris 光影路径
 - 对大型客户端整合包做兼容性降级和崩溃防护
 - 用 GitHub Actions 跑构建和客户端 smoke 测试
@@ -26,14 +26,14 @@ Alpha，但在当前测试栈上可以正常使用。
 |------|----------|
 | Minecraft | 1.21.1 |
 | NeoForge | 21.1.234 |
-| Sodium | 0.6.13-neoforge 和 0.8.12-beta.2+mc1.21.1 |
+| Sodium | 0.6.13-neoforge、0.8.12 和 0.8.13-beta.2+mc1.21.1 |
 | Iris | 1.8.14-beta.1+1.21.1-neoforge |
 | Forgified Fabric API | 0.116.7+2.2.0+1.21.1 |
 
 ## 已支持
 
 - 超出原版视距的 LOD 远景地形渲染
-- Sodium 0.6.13 和 0.8.12 渲染挂钩
+- Sodium 0.6.13 到 0.8.13 渲染挂钩
 - Iris 光影包渲染路径
 - 自动恢复 LOD：当 Sodium 区块同步短暂导致 Voxy 边界塌缩时，自动刷新渲染器
 - 专用服务器 companion：异步采集新生成区块并维护服务端 LOD 缓存
@@ -67,7 +67,7 @@ Alpha，但在当前测试栈上可以正常使用。
 
 | 模组/场景 | 状态 | 说明 |
 |-----------|------|------|
-| Sodium 0.6.13-neoforge 到 0.8.12-beta.2 | 必需，CI 测试 | 0.6.13 和 0.8.12 使用不同的渲染挂钩签名 |
+| Sodium 0.6.13-neoforge 到 0.8.13-beta.2 | 必需，CI 测试 | 0.6.13、稳定版 0.8.12 和当前 0.8.13 beta 分别构建验证 |
 | Iris 1.8.14-beta.1 | 已测试 | 光影可用；Voxy LOD 暂不写入 Iris 阴影贴图，以避免 shadow pass 崩溃 |
 | C2ME 0.4.0 alpha (NeoForge) | 兼容，间接优化 | 只加速单人世界的服务端区块任务；Voxy 的客户端 LOD 首次加载采用逐帧预算，避免进世界时集中争抢资源。连接远程服务器时 C2ME 不会加速 Voxy |
 | Create / Create Aeronautics | 已测试 | 在大型机械动力/航空学客户端整合包中测试通过，仍按客户端兼容性处理 |

@@ -202,7 +202,7 @@ dependencies {
     def sodiumModule = project.findProperty("sodium_module") ?: "net.caffeinemc:sodium-neoforge"
     def sodiumModModule = project.findProperty("sodium_mod_module") ?: "net.caffeinemc:sodium-neoforge-mod"
     def sodiumConfigApiModule = project.findProperty("sodium_config_api_module") ?: "net.caffeinemc:sodium-neoforge-mod"
-    def sodiumConfigApiVersion = project.findProperty("sodium_config_api_version") ?: "0.8.12-beta.2+mc1.21.1"
+    def sodiumConfigApiVersion = project.findProperty("sodium_config_api_version") ?: "0.8.13-beta.2+mc1.21.1"
     implementation "${sodiumModule}:${project.sodium_version}"
     compileOnly "${sodiumModModule}:${project.sodium_version}"
     compileOnly "${sodiumConfigApiModule}:${sodiumConfigApiVersion}"

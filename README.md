@@ -11,7 +11,7 @@ Voxy is an LOD distant terrain renderer created by [MCRcortex](https://github.co
 This fork focuses on:
 
 - NeoForge 1.21.1 compatibility
-- Sodium 0.8.12 render hook changes
+- Sodium 0.6.13 through 0.8.13 render hook changes
 - Iris shaderpack rendering
 - compatibility fallbacks and crash guards for large client modpacks
 - GitHub Actions builds and client smoke tests
@@ -26,14 +26,14 @@ Alpha, but usable on the tested client stack.
 |-----------|----------------|
 | Minecraft | 1.21.1 |
 | NeoForge | 21.1.234 |
-| Sodium | 0.6.13-neoforge and 0.8.12-beta.2+mc1.21.1 |
+| Sodium | 0.6.13-neoforge, 0.8.12, and 0.8.13-beta.2+mc1.21.1 |
 | Iris | 1.8.14-beta.1+1.21.1-neoforge |
 | Forgified Fabric API | 0.116.7+2.2.0+1.21.1 |
 
 ## Supported
 
 - LOD terrain rendering beyond vanilla render distance
-- Sodium 0.6.13 and 0.8.12 render hooks
+- Sodium 0.6.13 through 0.8.13 render hooks
 - Iris shaderpack rendering path
 - Auto LOD Recovery for cases where Sodium section sync temporarily collapses Voxy bounds
 - Dedicated-server companion that ingests newly generated chunks into a server-side LOD cache
@@ -67,7 +67,7 @@ Administrators can run `/voxy server status` to inspect the cache path plus inge
 
 | Mod / Scenario | Status | Notes |
 |----------------|--------|-------|
-| Sodium 0.6.13-neoforge to 0.8.12-beta.2 | Required, tested in CI | 0.6.13 and 0.8.12 have separate render hook signatures |
+| Sodium 0.6.13-neoforge to 0.8.13-beta.2 | Required, tested in CI | 0.6.13, stable 0.8.12, and the current 0.8.13 beta are built separately |
 | Iris 1.8.14-beta.1 | Tested | Shaderpacks work; Voxy LODs are not written into Iris shadow maps to avoid shadow pass crashes |
 | C2ME 0.4.0 alpha (NeoForge) | Compatible, indirect | Only accelerates integrated-server chunk work; Voxy now budgets initial client LOD loading per frame to avoid world-join contention. C2ME does not accelerate Voxy on remote servers |
 | Create / Create Aeronautics | Tested | Tested in a large Create/Aeronautics client modpack; still treated as client-side compatibility |

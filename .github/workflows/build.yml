@@ -16,8 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         sodium:
-          - label: sodium-0.8.12
+          - label: sodium-0.8.13
             gradle_args: ""
+          - label: sodium-0.8.12
+            gradle_args: "-Psodium_version=0.8.12+mc1.21.1 -Psodium_config_api_version=0.8.12+mc1.21.1 -Psodium_min_version=0.8.12"
           - label: sodium-0.6.13
             gradle_args: "-Psodium_module=maven.modrinth:sodium -Psodium_mod_module=maven.modrinth:sodium -Psodium_version=mc1.21.1-0.6.13-neoforge -Psodium_min_version=0.6.13"
 

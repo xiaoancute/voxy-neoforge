@@ -44,6 +44,17 @@ def main() -> int:
             "build.dependsOn validateServerArtifact",
             "scripts/validate_server_artifact.py",
         ],
+        "scripts/ci_server_smoke.sh": [
+            "validateServerArtifact",
+            "--installServer",
+            "bash run.sh nogui",
+            '"voxy server status"',
+            'grep -Eq "ingested=[1-9][0-9]*"',
+        ],
+        ".github/workflows/server-smoke.yml": [
+            "Run packaged dedicated-server smoke test",
+            "build/server-smoke/packaged-server/logs/**",
+        ],
     }
     forbidden = {
         "src/main/java/me/cortex/voxy/Voxy.java": [

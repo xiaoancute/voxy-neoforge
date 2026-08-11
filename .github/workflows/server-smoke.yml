@@ -10,7 +10,7 @@ on:
 jobs:
   server-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -27,11 +27,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Run dedicated-server smoke test
+      - name: Run packaged dedicated-server smoke test
         run: bash scripts/ci_server_smoke.sh
         env:
           GITHUB_ACTIONS: true
-          VOXY_SERVER_SMOKE_TIMEOUT: 300
+          VOXY_SERVER_SMOKE_TIMEOUT: 480
 
       - name: Upload server logs
         if: always()
@@ -39,6 +39,6 @@ jobs:
         with:
           name: dedicated-server-smoke-log
           path: |
-            build/server-smoke/**
-            runs/server/logs/**
-            runs/server/crash-reports/**
+            build/server-smoke/*.log
+            build/server-smoke/packaged-server/logs/**
+            build/server-smoke/packaged-server/crash-reports/**

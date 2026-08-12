@@ -601,8 +601,15 @@ tasks.named('jar') {
 dependencies {
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-    // LWJGL core - provided by Minecraft
-    implementation "org.lwjgl:lwjgl"
+    // LWJGL core - PROVIDED by Minecraft/NeoForge runtime.
+    // MUST NOT enter jarJar: its module-info declares module "org.lwjgl", which
+    // collides with NeoForge's own org.lwjgl module on the modulepath, causing
+    //   java.lang.module.ResolutionException: Module rocksdbjni reads more than
+    //   one module named org.lwjgl
+    // at launch (ModLauncher ModuleLayer build). This was the 0.6.0 regression
+    // that crashed the client before reaching the main menu on every platform.
+    // Use compileOnly so the API is visible at compile time but never bundled.
+    compileOnly "org.lwjgl:lwjgl"
 
     // LWJGL-LMDB and LWJGL-ZSTD - Required by Voxy, NOT provided by Minecraft
     // Reference: https://docs.neoforged.net/toolchain/docs/dependencies/nonmclibs/

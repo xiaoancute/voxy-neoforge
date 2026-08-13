@@ -50,7 +50,7 @@ Auto LOD Recovery is enabled by default. If distant chunks become overly simple 
 
 ## Dedicated Server
 
-The same jar can now be installed on a NeoForge 1.21.1 dedicated server. The server does not load Sodium, Iris, or OpenGL rendering code. It snapshots complete chunk palettes and lighting before background conversion, then stores Voxy LOD data under `<world>/voxy/server/`.
+The dedicated-server companion build can be installed on a NeoForge 1.21.1 server. Use the artifact marked `server`; the client artifact intentionally relies on Minecraft's LWJGL module and must not be installed on a dedicated server. The server does not load Sodium, Iris, or OpenGL rendering code. It snapshots complete chunk palettes and lighting before background conversion, then stores Voxy LOD data under `<world>/voxy/server/`.
 
 Server settings live in the world's `serverconfig/voxy-server.toml`:
 
@@ -89,7 +89,7 @@ Mods not listed here are not automatically incompatible; they are just not main 
 2. Install Sodium and Forgified Fabric API.
 3. Install Iris if you want shaderpack support.
 4. Build this project and place the generated jar in the client `mods` folder.
-5. The server companion is optional; place the same jar in the server `mods` folder when server-side LOD pre-generation is desired.
+5. The server companion is optional; place the separate `server` jar in the server `mods` folder when server-side LOD pre-generation is desired.
 
 ## Build
 

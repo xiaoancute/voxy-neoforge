@@ -26,18 +26,16 @@ REQUIRED_JARJAR = {
     ("org.xerial", "sqlite-jdbc"): "3.49.1.0",
 }
 
-FORBIDDEN_JARJAR = {
-    ("org.lwjgl", "lwjgl"):
-        "NeoForge already provides module org.lwjgl; bundling it crashes ModLauncher",
-}
+LWJGL_CORE = ("org.lwjgl", "lwjgl")
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
-        print("Usage: validate_server_artifact.py <voxy.jar>")
+    if len(sys.argv) != 3 or sys.argv[2] not in {"client", "server"}:
+        print("Usage: validate_server_artifact.py <voxy.jar> <client|server>")
         return 2
 
     artifact = Path(sys.argv[1])
+    distribution = sys.argv[2]
     failures = []
     if not artifact.is_file():
         print(f"Server artifact validation failed: missing {artifact}")
@@ -76,9 +74,12 @@ def main() -> int:
             elif jar.getinfo(nested_path).file_size == 0:
                 failures.append(f"bundled dependency {label} is empty")
 
-        for key, reason in FORBIDDEN_JARJAR.items():
-            if key in bundled:
-                failures.append(f"forbidden bundled dependency {':'.join(key)}: {reason}")
+        if distribution == "client" and LWJGL_CORE in bundled:
+            failures.append(
+                "client artifact bundles org.lwjgl:lwjgl, which duplicates NeoForge's module")
+        if distribution == "server" and LWJGL_CORE not in bundled:
+            failures.append(
+                "server artifact is missing org.lwjgl:lwjgl required by LMDB/Zstd")
 
     if failures:
         print("Server artifact validation failed:")
@@ -86,7 +87,7 @@ def main() -> int:
             print(f"- {failure}")
         return 1
 
-    print(f"Server artifact validation passed: {artifact.name}")
+    print(f"{distribution.capitalize()} artifact validation passed: {artifact.name}")
     return 0
 
 

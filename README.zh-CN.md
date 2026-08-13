@@ -50,7 +50,7 @@ Alpha，但在当前测试栈上可以正常使用。
 
 ## 专用服务器
 
-同一个 jar 现在可以安装在 NeoForge 1.21.1 专用服务器上。服务端不加载 Sodium、Iris 或任何 OpenGL 渲染代码；完整区块的 palette 和光照会先制作快照，再在后台转换成 Voxy LOD，并保存到 `<世界目录>/voxy/server/`。
+独立的服务端 companion 构建可以安装在 NeoForge 1.21.1 专用服务器上。请使用标有 `server` 的产物；客户端产物会使用 Minecraft 自带的 LWJGL 模块，不能安装到专用服务器。服务端不加载 Sodium、Iris 或任何 OpenGL 渲染代码；完整区块的 palette 和光照会先制作快照，再在后台转换成 Voxy LOD，并保存到 `<世界目录>/voxy/server/`。
 
 服务端配置位于世界的 `serverconfig/voxy-server.toml`：
 
@@ -89,7 +89,7 @@ Alpha，但在当前测试栈上可以正常使用。
 2. 安装 Sodium、Forgified Fabric API。
 3. 如果需要光影，安装 Iris。
 4. 构建本项目，把生成的 jar 放进客户端 `mods` 文件夹。
-5. 服务端 companion 是可选的；需要服务端预生成缓存时，把同一个 jar 放入服务器 `mods` 文件夹。
+5. 服务端 companion 是可选的；需要服务端预生成缓存时，把单独的 `server` jar 放入服务器 `mods` 文件夹。
 
 ## 构建
 

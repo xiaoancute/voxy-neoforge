@@ -5,6 +5,7 @@ plugins {
 
 def isInGHA = System.getenv("GITHUB_ACTIONS") == "true"
 def isPackagedClientSmoke = System.getenv("VOXY_PACKAGED_CLIENT_SMOKE") == "true"
+def isServerDistribution = (project.findProperty("server_distribution") ?: "false").toBoolean()
 
 version = project.mod_version
 group = project.maven_group
@@ -248,6 +249,9 @@ java {
 }
 
 jar {
+    if (isServerDistribution) {
+        archiveClassifier = "server"
+    }
     from("LICENSE") {
         rename { "${it}_${project.archives_base_name}"}
     }
@@ -420,7 +424,8 @@ tasks.register('validateServerArtifact', Exec) {
     def artifact = tasks.named('jar', Jar).flatMap { it.archiveFile }
     inputs.file(artifact)
     doFirst {
-        commandLine 'python3', 'scripts/validate_server_artifact.py', artifact.get().asFile.absolutePath
+        commandLine 'python3', 'scripts/validate_server_artifact.py', artifact.get().asFile.absolutePath,
+                isServerDistribution ? 'server' : 'client'
     }
 }
 
@@ -637,9 +642,16 @@ tasks.named('jar') {
 dependencies {
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-    // Minecraft/NeoForge provides LWJGL core on both runtime distributions.
-    // Bundling a second org.lwjgl module makes ModLauncher fail JPMS resolution.
-    compileOnly "org.lwjgl:lwjgl:$lwjglVersion"
+    if (isServerDistribution) {
+        // A clean dedicated server does not provide org.lwjgl, but LMDB requires it.
+        jarJar(implementation("org.lwjgl:lwjgl:$lwjglVersion")) {
+            version { strictly "[3.3.0,4.0.0)"; prefer "$lwjglVersion" }
+        }
+    } else {
+        // The client already provides org.lwjgl. Bundling a second copy makes
+        // ModLauncher fail while resolving the production JAR's module layer.
+        compileOnly "org.lwjgl:lwjgl:$lwjglVersion"
+    }
 
     // LWJGL-LMDB and LWJGL-ZSTD - Required by Voxy, NOT provided by Minecraft
     // Reference: https://docs.neoforged.net/toolchain/docs/dependencies/nonmclibs/
@@ -652,16 +664,17 @@ dependencies {
     jarJar(implementation("org.lwjgl:lwjgl-zstd:$lwjglVersion")) {
         version { strictly "[3.3.0,4.0.0)"; prefer "$lwjglVersion" }
     }
-    // Add to runtime classpath for MC 1.21.1 (not needed for 1.21.9+)
-    additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion"
-    additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion"
-    // Natives also need to be on runtime classpath (LWJGL extracts from classpath)
-    additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion:natives-windows"
-    additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-windows"
-    additionalRuntimeClasspath "org.lwjgl:lwjgl:$lwjglVersion:natives-windows"
-    additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion:natives-linux"
-    additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-linux"
-    additionalRuntimeClasspath "org.lwjgl:lwjgl:$lwjglVersion:natives-linux"
+    if (!isPackagedClientSmoke) {
+        // Source-based development runs do not resolve nested JarJar libraries.
+        additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion"
+        additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion"
+        additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion:natives-windows"
+        additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-windows"
+        additionalRuntimeClasspath "org.lwjgl:lwjgl:$lwjglVersion:natives-windows"
+        additionalRuntimeClasspath "org.lwjgl:lwjgl-lmdb:$lwjglVersion:natives-linux"
+        additionalRuntimeClasspath "org.lwjgl:lwjgl-zstd:$lwjglVersion:natives-linux"
+        additionalRuntimeClasspath "org.lwjgl:lwjgl:$lwjglVersion:natives-linux"
+    }
 
     // === JarJar Bundled Dependencies (full feature parity) ===
 
@@ -701,11 +714,13 @@ dependencies {
         }
     }
 
-    // JarJar dependencies are bundled in production, but NeoForge dev runs need
-    // them explicitly on the classpath for runClient and runServer.
-    additionalRuntimeClasspath 'org.rocksdb:rocksdbjni:10.9.1'
-    additionalRuntimeClasspath 'redis.clients:jedis:5.1.0'
-    additionalRuntimeClasspath 'org.xerial:sqlite-jdbc:3.49.1.0'
+    if (!isPackagedClientSmoke) {
+        // JarJar dependencies are bundled in production, but source-based
+        // NeoForge development runs need them explicitly on the classpath.
+        additionalRuntimeClasspath 'org.rocksdb:rocksdbjni:10.9.1'
+        additionalRuntimeClasspath 'redis.clients:jedis:5.1.0'
+        additionalRuntimeClasspath 'org.xerial:sqlite-jdbc:3.49.1.0'
+    }
     //implementation 'org.rocksdb:rocksdbjni:8.10.0'
     //implementation 'redis.clients:jedis:5.1.0'
 }

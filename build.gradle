@@ -4,6 +4,7 @@ plugins {
 }
 
 def isInGHA = System.getenv("GITHUB_ACTIONS") == "true"
+def isPackagedClientSmoke = System.getenv("VOXY_PACKAGED_CLIENT_SMOKE") == "true"
 
 version = project.mod_version
 group = project.maven_group
@@ -176,9 +177,11 @@ neoForge {
         }
     }
 
-    mods {
-        voxy {
-            sourceSet sourceSets.main
+    if (!isPackagedClientSmoke) {
+        mods {
+            voxy {
+                sourceSet sourceSets.main
+            }
         }
     }
 }
@@ -634,11 +637,9 @@ tasks.named('jar') {
 dependencies {
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-    // LWJGL core is provided by the Minecraft client, but not by a dedicated
-    // server. Bundle it so the LMDB/Zstd modules and MemoryUtil can load there.
-    jarJar(implementation("org.lwjgl:lwjgl:$lwjglVersion")) {
-        version { strictly "[3.3.0,4.0.0)"; prefer "$lwjglVersion" }
-    }
+    // Minecraft/NeoForge provides LWJGL core on both runtime distributions.
+    // Bundling a second org.lwjgl module makes ModLauncher fail JPMS resolution.
+    compileOnly "org.lwjgl:lwjgl:$lwjglVersion"
 
     // LWJGL-LMDB and LWJGL-ZSTD - Required by Voxy, NOT provided by Minecraft
     // Reference: https://docs.neoforged.net/toolchain/docs/dependencies/nonmclibs/

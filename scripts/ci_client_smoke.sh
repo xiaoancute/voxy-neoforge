@@ -67,6 +67,25 @@ if ! ./gradlew "${gradle_args[@]}" "$copy_task" --console=plain >"$log_file" 2>&
     exit 1
 fi
 
+if [[ "${VOXY_PACKAGED_CLIENT_SMOKE:-false}" == "true" ]]; then
+    echo "Installing production Voxy JAR" >>"$log_file"
+    if ! ./gradlew "${gradle_args[@]}" jar validateServerArtifact --console=plain >>"$log_file" 2>&1; then
+        echo "Failed to build or validate production Voxy JAR"
+        tail -200 "$log_file"
+        exit 1
+    fi
+
+    mapfile -t voxy_jars < <(find build/libs -maxdepth 1 -type f -name 'voxy-*.jar' -print)
+    if (( ${#voxy_jars[@]} != 1 )); then
+        echo "Expected exactly one production Voxy JAR, found ${#voxy_jars[@]}"
+        printf '%s\n' "${voxy_jars[@]}"
+        exit 1
+    fi
+    mkdir -p runs/client/mods
+    rm -f runs/client/mods/voxy-*.jar
+    cp "${voxy_jars[0]}" runs/client/mods/voxy.jar
+fi
+
 if [[ "$smoke_profile" == "sodium-iris-shaderpack" ]]; then
     echo "Preparing Iris smoke shaderpack" >>"$log_file"
     mkdir -p "runs/client/shaderpacks/${shaderpack_name}/shaders"

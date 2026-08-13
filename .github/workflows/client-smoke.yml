@@ -44,6 +44,7 @@ jobs:
         run: bash scripts/ci_client_smoke.sh
         env:
           GITHUB_ACTIONS: true
+          VOXY_PACKAGED_CLIENT_SMOKE: true
           VOXY_CLIENT_SMOKE_PROFILE: ${{ matrix.smoke-profile }}
           VOXY_CLIENT_SMOKE_TIMEOUT: 240
 

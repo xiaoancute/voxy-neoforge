@@ -18,13 +18,17 @@ REQUIRED_ENTRIES = {
 }
 
 REQUIRED_JARJAR = {
-    ("org.lwjgl", "lwjgl"): "3.3.3",
     ("org.lwjgl", "lwjgl-lmdb"): "3.3.3",
     ("org.lwjgl", "lwjgl-zstd"): "3.3.3",
     ("org.rocksdb", "rocksdbjni"): "10.9.1",
     ("org.apache.commons", "commons-pool2"): "2.12.0",
     ("redis.clients", "jedis"): "5.1.0",
     ("org.xerial", "sqlite-jdbc"): "3.49.1.0",
+}
+
+FORBIDDEN_JARJAR = {
+    ("org.lwjgl", "lwjgl"):
+        "NeoForge already provides module org.lwjgl; bundling it crashes ModLauncher",
 }
 
 
@@ -71,6 +75,10 @@ def main() -> int:
                 failures.append(f"bundled dependency {label} points to missing {nested_path}")
             elif jar.getinfo(nested_path).file_size == 0:
                 failures.append(f"bundled dependency {label} is empty")
+
+        for key, reason in FORBIDDEN_JARJAR.items():
+            if key in bundled:
+                failures.append(f"forbidden bundled dependency {':'.join(key)}: {reason}")
 
     if failures:
         print("Server artifact validation failed:")

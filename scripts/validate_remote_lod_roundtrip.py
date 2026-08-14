@@ -69,14 +69,14 @@ def main():
         "SQLite JDBC on the NeoForge dev runtime classpath",
         failures)
     require(
-        "build.gradle",
-        'additionalRuntimeClasspath "org.lwjgl:lwjgl:$lwjglVersion:natives-linux"',
-        "LWJGL core native on the dedicated-server dev runtime classpath",
+        "src/main/java/me/cortex/voxy/server/VoxyServerInstance.java",
+        "new ServerSectionStorage",
+        "LWJGL-free dedicated-server storage",
         failures)
     require(
         "build.gradle",
         'lwjglNativesRaw "org.lwjgl:lwjgl:$lwjglVersion:natives-linux"',
-        "LWJGL core native in the production mod JAR",
+        "LWJGL core native for client-side binding loading",
         failures)
     require(
         "scripts/ci_remote_lod_roundtrip.sh",

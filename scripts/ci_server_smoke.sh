@@ -23,7 +23,7 @@ trap cleanup EXIT
 mkdir -p "$work_dir" "$server_dir"
 
 echo "Building and validating the production mod JAR"
-./gradlew -Pserver_distribution=true jar validateServerArtifact --console=plain >"$build_log" 2>&1
+./gradlew jar validateServerArtifact --console=plain >"$build_log" 2>&1
 
 shopt -s nullglob
 mod_jars=(build/libs/*.jar)

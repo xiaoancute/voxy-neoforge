@@ -50,7 +50,7 @@ Alpha，但在当前测试栈上可以正常使用。
 
 ## 专用服务器
 
-独立的服务端 companion 构建可以安装在 NeoForge 1.21.1 专用服务器上。请使用标有 `server` 的产物；客户端产物会使用 Minecraft 自带的 LWJGL 模块，不能安装到专用服务器。服务端不加载 Sodium、Iris 或任何 OpenGL 渲染代码；完整区块的 palette 和光照会先制作快照，再在后台转换成 Voxy LOD，并保存到 `<世界目录>/voxy/server/`。
+同一个 Voxy JAR 可以同时安装在 NeoForge 1.21.1 客户端和专用服务器上。服务端不会加载 Sodium、Iris、LWJGL 或任何 OpenGL 渲染代码；完整区块的 palette 和光照会先制作快照，再在后台转换成 Voxy LOD，并保存到 `<世界目录>/voxy/server/`。
 
 服务端配置位于世界的 `serverconfig/voxy-server.toml`：
 
@@ -67,13 +67,13 @@ Alpha，但在当前测试栈上可以正常使用。
 
 | 模组/场景 | 状态 | 说明 |
 |-----------|------|------|
-| Sodium 0.6.13-neoforge 到 0.8.13-beta.2 | 必需，CI 测试 | 0.6.13、稳定版 0.8.12 和当前 0.8.13 beta 分别构建验证 |
+| Sodium 0.6.13-neoforge 到 0.8.13-beta.2 | 必需，CI 测试 | 同一个 JAR 分别搭配 0.6.13、稳定版 0.8.12 和当前 0.8.13 beta 启动验证 |
 | Iris 1.8.14-beta.1 | 已测试 | 光影可用；Voxy LOD 暂不写入 Iris 阴影贴图，以避免 shadow pass 崩溃 |
 | C2ME 0.4.0 alpha (NeoForge) | 兼容，间接优化 | 只加速单人世界的服务端区块任务；Voxy 的客户端 LOD 首次加载采用逐帧预算，避免进世界时集中争抢资源。连接远程服务器时 C2ME 不会加速 Voxy |
 | Create / Create Aeronautics | 已测试 | 在大型机械动力/航空学客户端整合包中测试通过，仍按客户端兼容性处理 |
 | Sable | 已测试 | 可与当前 Voxy 渲染路径共存 |
 | Modern UI | 已知冲突 | 可能导致 Voxy 有缓存但不绘制；遇到 LOD 不显示优先关闭它 |
-| 专用服务器 | Companion 支持 | 可选安装；生成并按限额提供 LOD 缓存，不加载客户端渲染代码 |
+| 专用服务器 | 同包 Companion 支持 | 可选安装；客户端 JAR 也能生成并按限额提供 LOD 缓存，不加载客户端渲染代码 |
 
 没有列出的模组不代表不兼容，只是没有作为主要目标确认。小型 UI、美化、辅助类模组不在这里逐个记录。
 
@@ -89,7 +89,7 @@ Alpha，但在当前测试栈上可以正常使用。
 2. 安装 Sodium、Forgified Fabric API。
 3. 如果需要光影，安装 Iris。
 4. 构建本项目，把生成的 jar 放进客户端 `mods` 文件夹。
-5. 服务端 companion 是可选的；需要服务端预生成缓存时，把单独的 `server` jar 放入服务器 `mods` 文件夹。
+5. 服务端支持是可选的；需要服务端预生成缓存时，把完全相同的 jar 放入服务器 `mods` 文件夹。
 
 ## 构建
 

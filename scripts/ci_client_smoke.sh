@@ -1,31 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-smoke_profile="${VOXY_CLIENT_SMOKE_PROFILE:-sodium}"
+smoke_profile="${VOXY_CLIENT_SMOKE_PROFILE:-sodium-0.8.13}"
 timeout_seconds="${VOXY_CLIENT_SMOKE_TIMEOUT:-180}"
 log_file="${VOXY_CLIENT_SMOKE_LOG:-build/client-smoke/${smoke_profile}/runClient.log}"
 marker="Voxy client initialization completed"
 gradle_args=()
-min_sodium_version="$(sed -n 's/^sodium_compat_min_version=//p' gradle.properties)"
 
 case "$smoke_profile" in
-    sodium-min)
+    sodium-0.6.13)
         copy_task="copyClientSmokeMods"
-        gradle_args=(-Psodium_version="$min_sodium_version")
+        gradle_args=(
+            -Psodium_module=maven.modrinth:sodium
+            -Psodium_mod_module=maven.modrinth:sodium
+            -Psodium_version=mc1.21.1-0.6.13-neoforge
+        )
         ;;
-    sodium-min-iris)
+    sodium-0.8.12)
+        copy_task="copyClientSmokeMods"
+        gradle_args=(
+            -Psodium_version=0.8.12+mc1.21.1
+            -Psodium_config_api_version=0.8.12+mc1.21.1
+        )
+        ;;
+    sodium-0.8.13)
+        copy_task="copyClientSmokeMods"
+        ;;
+    sodium-0.8.13-iris|sodium-0.8.13-iris-shaderpack)
         copy_task="copyClientSmokeIrisMods"
-        gradle_args=(-Psodium_version="$min_sodium_version")
         ;;
-    sodium-min-dh)
+    sodium-0.8.13-dh)
         copy_task="copyClientSmokeDhMods"
-        gradle_args=(-Psodium_version="$min_sodium_version")
-        ;;
-    sodium)
-        copy_task="copyClientSmokeMods"
-        ;;
-    sodium-iris|sodium-iris-shaderpack)
-        copy_task="copyClientSmokeIrisMods"
         ;;
     *)
         echo "Unknown VOXY_CLIENT_SMOKE_PROFILE: ${smoke_profile}"
@@ -33,14 +38,9 @@ case "$smoke_profile" in
         ;;
 esac
 
-if [[ "${smoke_profile}" == sodium-min* && -z "$min_sodium_version" ]]; then
-    echo "Missing sodium_compat_min_version in gradle.properties"
-    exit 2
-fi
-
 shaderpack_name="voxy-ci-empty"
 shaderpack_marker=""
-if [[ "$smoke_profile" == "sodium-iris-shaderpack" ]]; then
+if [[ "$smoke_profile" == "sodium-0.8.13-iris-shaderpack" ]]; then
     shaderpack_marker="Using shaderpack: ${shaderpack_name}"
 fi
 
@@ -67,7 +67,17 @@ if ! ./gradlew "${gradle_args[@]}" "$copy_task" --console=plain >"$log_file" 2>&
     exit 1
 fi
 
-if [[ "${VOXY_PACKAGED_CLIENT_SMOKE:-false}" == "true" ]]; then
+if [[ -n "${VOXY_PREBUILT_JAR:-}" ]]; then
+    echo "Installing prebuilt production Voxy JAR" >>"$log_file"
+    test -f "$VOXY_PREBUILT_JAR"
+    python3 scripts/validate_server_artifact.py "$VOXY_PREBUILT_JAR" >>"$log_file" 2>&1
+    mkdir -p runs/client/mods
+    rm -f runs/client/mods/voxy-*.jar runs/client/mods/voxy.jar
+    cp "$VOXY_PREBUILT_JAR" runs/client/mods/voxy.jar
+    sha256sum "$VOXY_PREBUILT_JAR" runs/client/mods/voxy.jar >>"$log_file"
+    test "$(sha256sum "$VOXY_PREBUILT_JAR" | cut -d' ' -f1)" = \
+        "$(sha256sum runs/client/mods/voxy.jar | cut -d' ' -f1)"
+elif [[ "${VOXY_PACKAGED_CLIENT_SMOKE:-false}" == "true" ]]; then
     echo "Installing production Voxy JAR" >>"$log_file"
     if ! ./gradlew "${gradle_args[@]}" jar validateServerArtifact --console=plain >>"$log_file" 2>&1; then
         echo "Failed to build or validate production Voxy JAR"
@@ -86,7 +96,7 @@ if [[ "${VOXY_PACKAGED_CLIENT_SMOKE:-false}" == "true" ]]; then
     cp "${voxy_jars[0]}" runs/client/mods/voxy.jar
 fi
 
-if [[ "$smoke_profile" == "sodium-iris-shaderpack" ]]; then
+if [[ "$smoke_profile" == "sodium-0.8.13-iris-shaderpack" ]]; then
     echo "Preparing Iris smoke shaderpack" >>"$log_file"
     mkdir -p "runs/client/shaderpacks/${shaderpack_name}/shaders"
     mkdir -p "runs/client/config"

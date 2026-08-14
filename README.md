@@ -50,7 +50,7 @@ Auto LOD Recovery is enabled by default. If distant chunks become overly simple 
 
 ## Dedicated Server
 
-The dedicated-server companion build can be installed on a NeoForge 1.21.1 server. Use the artifact marked `server`; the client artifact intentionally relies on Minecraft's LWJGL module and must not be installed on a dedicated server. The server does not load Sodium, Iris, or OpenGL rendering code. It snapshots complete chunk palettes and lighting before background conversion, then stores Voxy LOD data under `<world>/voxy/server/`.
+The same Voxy JAR can be installed on a NeoForge 1.21.1 client and dedicated server. The server does not load Sodium, Iris, LWJGL, or OpenGL rendering code. It snapshots complete chunk palettes and lighting before background conversion, then stores Voxy LOD data under `<world>/voxy/server/`.
 
 Server settings live in the world's `serverconfig/voxy-server.toml`:
 
@@ -67,13 +67,13 @@ Administrators can run `/voxy server status` to inspect the cache path plus inge
 
 | Mod / Scenario | Status | Notes |
 |----------------|--------|-------|
-| Sodium 0.6.13-neoforge to 0.8.13-beta.2 | Required, tested in CI | 0.6.13, stable 0.8.12, and the current 0.8.13 beta are built separately |
+| Sodium 0.6.13-neoforge to 0.8.13-beta.2 | Required, tested in CI | The same JAR is launched with 0.6.13, stable 0.8.12, and the current 0.8.13 beta |
 | Iris 1.8.14-beta.1 | Tested | Shaderpacks work; Voxy LODs are not written into Iris shadow maps to avoid shadow pass crashes |
 | C2ME 0.4.0 alpha (NeoForge) | Compatible, indirect | Only accelerates integrated-server chunk work; Voxy now budgets initial client LOD loading per frame to avoid world-join contention. C2ME does not accelerate Voxy on remote servers |
 | Create / Create Aeronautics | Tested | Tested in a large Create/Aeronautics client modpack; still treated as client-side compatibility |
 | Sable | Tested | Works with the current Voxy render path |
 | Modern UI | Known conflict | Can cause Voxy cache to exist but not render; disable it first if LODs disappear |
-| Dedicated server | Companion support | Optional; builds and serves a bounded LOD cache without loading client rendering code |
+| Dedicated server | Same-JAR companion support | Optional; the client JAR also builds and serves a bounded LOD cache without loading client rendering code |
 
 Mods not listed here are not automatically incompatible; they are just not main verified targets. Small UI, cosmetic, and utility mods are intentionally not tracked one by one.
 
@@ -89,7 +89,7 @@ Mods not listed here are not automatically incompatible; they are just not main 
 2. Install Sodium and Forgified Fabric API.
 3. Install Iris if you want shaderpack support.
 4. Build this project and place the generated jar in the client `mods` folder.
-5. The server companion is optional; place the separate `server` jar in the server `mods` folder when server-side LOD pre-generation is desired.
+5. Server support is optional; place that exact same jar in the server `mods` folder when server-side LOD pre-generation is desired.
 
 ## Build
 

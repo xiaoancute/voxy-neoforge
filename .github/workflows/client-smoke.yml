@@ -4,7 +4,33 @@ on:
   workflow_dispatch:
 
 jobs:
+  build-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v6
+      - name: Setup Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+      - name: Build universal production JAR once
+        run: ./gradlew jar validateServerArtifact --console=plain
+        env:
+          GITHUB_ACTIONS: true
+      - name: Upload universal production JAR
+        uses: actions/upload-artifact@v7
+        with:
+          name: voxy-universal-smoke-jar
+          path: build/libs/voxy-*.jar
+          retention-days: 7
+
   client-smoke:
+    needs: build-artifact
     name: client-smoke (${{ matrix.smoke-profile }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -12,12 +38,12 @@ jobs:
       fail-fast: false
       matrix:
         smoke-profile:
-          - sodium-min
-          - sodium-min-iris
-          - sodium-min-dh
-          - sodium
-          - sodium-iris
-          - sodium-iris-shaderpack
+          - sodium-0.6.13
+          - sodium-0.8.12
+          - sodium-0.8.13
+          - sodium-0.8.13-iris
+          - sodium-0.8.13-dh
+          - sodium-0.8.13-iris-shaderpack
 
     steps:
       - name: Checkout sources
@@ -39,6 +65,19 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+
+      - name: Download universal production JAR
+        uses: actions/download-artifact@v8
+        with:
+          name: voxy-universal-smoke-jar
+          path: build/prebuilt
+
+      - name: Resolve universal production JAR
+        shell: bash
+        run: |
+          mapfile -t jars < <(find build/prebuilt -maxdepth 1 -type f -name 'voxy-*.jar' -print)
+          test "${#jars[@]}" -eq 1
+          echo "VOXY_PREBUILT_JAR=${jars[0]}" >> "$GITHUB_ENV"
 
       - name: Run client smoke test
         run: bash scripts/ci_client_smoke.sh

@@ -15,27 +15,30 @@ REQUIRED_ENTRIES = {
     "lwjgl.dll",
     "lwjgl_lmdb.dll",
     "lwjgl_zstd.dll",
+    "org/lwjgl/util/lmdb/LMDB.class",
+    "org/lwjgl/util/zstd/Zstd.class",
 }
 
 REQUIRED_JARJAR = {
-    ("org.lwjgl", "lwjgl-lmdb"): "3.3.3",
-    ("org.lwjgl", "lwjgl-zstd"): "3.3.3",
     ("org.rocksdb", "rocksdbjni"): "10.9.1",
     ("org.apache.commons", "commons-pool2"): "2.12.0",
     ("redis.clients", "jedis"): "5.1.0",
     ("org.xerial", "sqlite-jdbc"): "3.49.1.0",
 }
 
-LWJGL_CORE = ("org.lwjgl", "lwjgl")
+FORBIDDEN_LWJGL_MODULES = {
+    ("org.lwjgl", "lwjgl"),
+    ("org.lwjgl", "lwjgl-lmdb"),
+    ("org.lwjgl", "lwjgl-zstd"),
+}
 
 
 def main() -> int:
-    if len(sys.argv) != 3 or sys.argv[2] not in {"client", "server"}:
-        print("Usage: validate_server_artifact.py <voxy.jar> <client|server>")
+    if len(sys.argv) != 2:
+        print("Usage: validate_server_artifact.py <voxy.jar>")
         return 2
 
     artifact = Path(sys.argv[1])
-    distribution = sys.argv[2]
     failures = []
     if not artifact.is_file():
         print(f"Server artifact validation failed: missing {artifact}")
@@ -74,12 +77,11 @@ def main() -> int:
             elif jar.getinfo(nested_path).file_size == 0:
                 failures.append(f"bundled dependency {label} is empty")
 
-        if distribution == "client" and LWJGL_CORE in bundled:
-            failures.append(
-                "client artifact bundles org.lwjgl:lwjgl, which duplicates NeoForge's module")
-        if distribution == "server" and LWJGL_CORE not in bundled:
-            failures.append(
-                "server artifact is missing org.lwjgl:lwjgl required by LMDB/Zstd")
+        for module in sorted(FORBIDDEN_LWJGL_MODULES & bundled.keys()):
+            failures.append(f"artifact exposes conflicting JarJar module {':'.join(module)}")
+
+        if any(name == "module-info.class" or name.endswith("/module-info.class") for name in entries):
+            failures.append("artifact retains module-info.class")
 
     if failures:
         print("Server artifact validation failed:")
@@ -87,7 +89,7 @@ def main() -> int:
             print(f"- {failure}")
         return 1
 
-    print(f"{distribution.capitalize()} artifact validation passed: {artifact.name}")
+    print(f"Universal client/server artifact validation passed: {artifact.name}")
     return 0
 
 

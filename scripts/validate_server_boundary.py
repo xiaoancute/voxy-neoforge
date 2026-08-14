@@ -43,10 +43,19 @@ def main() -> int:
         "build.gradle": [
             "build.dependsOn validateServerArtifact",
             "scripts/validate_server_artifact.py",
-            'if (isServerDistribution)',
-            'jarJar(implementation("org.lwjgl:lwjgl:$lwjglVersion"))',
             'compileOnly "org.lwjgl:lwjgl:$lwjglVersion"',
+            "lwjglBindingsRaw",
+            "exclude 'META-INF/versions/**/module-info.class'",
             "jarJar(implementation('org.apache.commons:commons-pool2:2.12.0'))",
+        ],
+        "src/main/java/me/cortex/voxy/server/VoxyServerInstance.java": [
+            "new ServerSectionStorage",
+            '.resolve("storage-v1")',
+        ],
+        "src/main/java/me/cortex/voxy/server/ServerSectionStorage.java": [
+            "ByteBuffer.allocate",
+            "DeflaterOutputStream",
+            "RocksDB.open",
         ],
         "scripts/ci_server_smoke.sh": [
             "validateServerArtifact",
@@ -67,7 +76,10 @@ def main() -> int:
             "me.cortex.voxy.client",
         ],
         "src/main/java/me/cortex/voxy/server/VoxyServerConfig.java": ["net.minecraft.client", "me.cortex.voxy.client"],
-        "src/main/java/me/cortex/voxy/server/VoxyServerInstance.java": ["net.minecraft.client", "me.cortex.voxy.client"],
+        "src/main/java/me/cortex/voxy/server/VoxyServerInstance.java": [
+            "net.minecraft.client", "me.cortex.voxy.client", "StorageConfigUtil"],
+        "src/main/java/me/cortex/voxy/server/ServerSectionStorage.java": [
+            "org.lwjgl", "MemoryBuffer", "SaveLoadSystem3"],
         "src/main/java/me/cortex/voxy/server/VoxyServerLifecycle.java": ["net.minecraft.client", "me.cortex.voxy.client"],
         "src/main/java/me/cortex/voxy/server/VoxyServerCommands.java": ["net.minecraft.client", "me.cortex.voxy.client"],
         "src/main/java/me/cortex/voxy/server/VoxyServerNetwork.java": [

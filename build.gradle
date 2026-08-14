@@ -558,7 +558,8 @@ dependencies {
     lwjglBindingsRaw "org.lwjgl:lwjgl-lmdb:$lwjglVersion"
     lwjglBindingsRaw "org.lwjgl:lwjgl-zstd:$lwjglVersion"
 
-    clientSmokeMods "net.caffeinemc:sodium-neoforge:${project.sodium_version}"
+    def clientSmokeSodiumModule = project.findProperty("sodium_module") ?: "net.caffeinemc:sodium-neoforge"
+    clientSmokeMods "${clientSmokeSodiumModule}:${project.sodium_version}"
     clientSmokeIrisMods "maven.modrinth:iris:${project.iris_version}"
     clientSmokeDhMods "maven.modrinth:distanthorizons:3.1.0-b-1.21.1"
 }

@@ -45,7 +45,7 @@ def main() -> int:
             "scripts/validate_server_artifact.py",
             'compileOnly "org.lwjgl:lwjgl:$lwjglVersion"',
             "lwjglBindingsRaw",
-            "exclude 'META-INF/versions/**/module-info.class'",
+            "exclude 'META-INF/**'",
             "jarJar(implementation('org.apache.commons:commons-pool2:2.12.0'))",
         ],
         "src/main/java/me/cortex/voxy/server/VoxyServerInstance.java": [

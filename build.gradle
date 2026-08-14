@@ -644,12 +644,8 @@ tasks.named('jar') {
     // Keep optional LWJGL bindings available to clients without making them
     // separate JPMS modules that require org.lwjgl on a dedicated server.
     from({ configurations.lwjglBindingsRaw.collect { zipTree(it) } }) {
-        exclude 'META-INF/MANIFEST.MF'
-        exclude 'META-INF/versions/**/module-info.class'
+        exclude 'META-INF/**'
         exclude 'module-info.class'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.RSA'
-        exclude 'META-INF/*.DSA'
     }
 }
 

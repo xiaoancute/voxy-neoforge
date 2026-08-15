@@ -39,7 +39,10 @@ jobs:
       matrix:
         smoke-profile:
           - sodium-0.6.13
+          - sodium-0.6.13-iris
+          - sodium-0.6.13-iris-shaderpack
           - sodium-0.8.12
+          - sodium-0.8.12-iris
           - sodium-0.8.13
           - sodium-0.8.13-iris
           - sodium-0.8.13-dh

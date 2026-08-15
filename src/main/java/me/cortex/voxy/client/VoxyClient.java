@@ -36,6 +36,8 @@ import java.util.function.Function;
  */
 @EventBusSubscriber(modid = "voxy", value = Dist.CLIENT)
 public class VoxyClient {
+    private static final String RENDER_COMPATIBILITY_PROBE_PROPERTY = "voxy.clientSmokeRenderCompatibilityProbe";
+    private static final String SODIUM_RENDER_SECTION_MANAGER = "net.caffeinemc.mods.sodium.client.render.chunk.RenderSectionManager";
     private static final HashSet<String> FREX = new HashSet<>();
     private static boolean rendererRefreshQueued;
     private static String rendererRefreshReason = "";
@@ -62,7 +64,25 @@ public class VoxyClient {
         } else {
             Logger.error("Voxy is unsupported on your system.");
         }
+
+        runRenderCompatibilityProbe();
         Logger.info("Voxy client initialization completed");
+    }
+
+    private static void runRenderCompatibilityProbe() {
+        if (!Boolean.getBoolean(RENDER_COMPATIBILITY_PROBE_PROPERTY)) {
+            return;
+        }
+
+        // Sodium normally loads this class only after joining a world. Loading it during
+        // smoke tests makes Mixin validate both Voxy's and Iris's version-specific hooks.
+        try {
+            Class.forName(SODIUM_RENDER_SECTION_MANAGER, false, VoxyClient.class.getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Failed to load Sodium's render section manager during the client smoke test", e);
+        }
+
+        Logger.info("Voxy Sodium/Iris render compatibility probe completed");
     }
 
     /**

@@ -5,7 +5,9 @@ smoke_profile="${VOXY_CLIENT_SMOKE_PROFILE:-sodium-0.8.13}"
 timeout_seconds="${VOXY_CLIENT_SMOKE_TIMEOUT:-180}"
 log_file="${VOXY_CLIENT_SMOKE_LOG:-build/client-smoke/${smoke_profile}/runClient.log}"
 marker="Voxy client initialization completed"
+render_compatibility_marker="Voxy Sodium/Iris render compatibility probe completed"
 gradle_args=()
+legacy_iris_version="$(sed -n 's/^iris_legacy_version=//p' gradle.properties)"
 
 case "$smoke_profile" in
     sodium-0.6.13)
@@ -16,8 +18,24 @@ case "$smoke_profile" in
             -Psodium_version=mc1.21.1-0.6.13-neoforge
         )
         ;;
+    sodium-0.6.13-iris|sodium-0.6.13-iris-shaderpack)
+        copy_task="copyClientSmokeIrisMods"
+        gradle_args=(
+            -Psodium_module=maven.modrinth:sodium
+            -Psodium_mod_module=maven.modrinth:sodium
+            -Psodium_version=mc1.21.1-0.6.13-neoforge
+            -Piris_version="$legacy_iris_version"
+        )
+        ;;
     sodium-0.8.12)
         copy_task="copyClientSmokeMods"
+        gradle_args=(
+            -Psodium_version=0.8.12+mc1.21.1
+            -Psodium_config_api_version=0.8.12+mc1.21.1
+        )
+        ;;
+    sodium-0.8.12-iris)
+        copy_task="copyClientSmokeIrisMods"
         gradle_args=(
             -Psodium_version=0.8.12+mc1.21.1
             -Psodium_config_api_version=0.8.12+mc1.21.1
@@ -40,11 +58,12 @@ esac
 
 shaderpack_name="voxy-ci-empty"
 shaderpack_marker=""
-if [[ "$smoke_profile" == "sodium-0.8.13-iris-shaderpack" ]]; then
+if [[ "$smoke_profile" == *-iris-shaderpack ]]; then
     shaderpack_marker="Using shaderpack: ${shaderpack_name}"
 fi
 
 markers_found() {
+    grep -q "$render_compatibility_marker" "$log_file" || return 1
     grep -q "$marker" "$log_file" || return 1
 
     if [[ -n "$shaderpack_marker" ]]; then
@@ -59,6 +78,11 @@ echo "Starting NeoForge client smoke test"
 echo "Profile: ${smoke_profile}"
 echo "Timeout: ${timeout_seconds}s"
 echo "Log: ${log_file}"
+
+if [[ "$smoke_profile" == sodium-0.6.13-iris* && -z "$legacy_iris_version" ]]; then
+    echo "Missing iris_legacy_version in gradle.properties"
+    exit 2
+fi
 
 echo "Installing smoke mod dependencies"
 if ! ./gradlew "${gradle_args[@]}" "$copy_task" --console=plain >"$log_file" 2>&1; then
@@ -96,7 +120,7 @@ elif [[ "${VOXY_PACKAGED_CLIENT_SMOKE:-false}" == "true" ]]; then
     cp "${voxy_jars[0]}" runs/client/mods/voxy.jar
 fi
 
-if [[ "$smoke_profile" == "sodium-0.8.13-iris-shaderpack" ]]; then
+if [[ "$smoke_profile" == *-iris-shaderpack ]]; then
     echo "Preparing Iris smoke shaderpack" >>"$log_file"
     mkdir -p "runs/client/shaderpacks/${shaderpack_name}/shaders"
     mkdir -p "runs/client/config"
@@ -110,6 +134,8 @@ maxShadowRenderDistance=32
 colorSpace=SRGB
 EOF
 fi
+
+export VOXY_CI_RENDER_COMPAT_PROBE=true
 
 set +e
 xvfb-run -a ./gradlew "${gradle_args[@]}" runClient --console=plain >>"$log_file" 2>&1 &

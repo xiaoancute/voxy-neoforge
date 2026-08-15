@@ -164,6 +164,9 @@ neoForge {
         client {
             client()
             gameDirectory.set(layout.projectDirectory.dir("runs/client"))
+            if (System.getenv("VOXY_CI_RENDER_COMPAT_PROBE") == "true") {
+                systemProperty "voxy.clientSmokeRenderCompatibilityProbe", "true"
+            }
             def ciMultiplayerAddress = System.getenv("VOXY_CI_MULTIPLAYER_ADDRESS")
             if (ciMultiplayerAddress) {
                 programArgument '--quickPlayMultiplayer'

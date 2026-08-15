@@ -27,7 +27,7 @@ Alpha, but usable on the tested client stack.
 | Minecraft | 1.21.1 |
 | NeoForge | 21.1.234 |
 | Sodium | 0.6.13-neoforge, 0.8.12, and 0.8.13-beta.2+mc1.21.1 |
-| Iris | 1.8.14-beta.1+1.21.1-neoforge |
+| Iris | 1.8.12 with Sodium 0.6.13; 1.8.14-beta.1 with Sodium 0.8.x |
 | Forgified Fabric API | 0.116.7+2.2.0+1.21.1 |
 
 ## Supported
@@ -68,7 +68,8 @@ Administrators can run `/voxy server status` to inspect the cache path plus inge
 | Mod / Scenario | Status | Notes |
 |----------------|--------|-------|
 | Sodium 0.6.13-neoforge to 0.8.13-beta.2 | Required, tested in CI | The same JAR is launched with 0.6.13, stable 0.8.12, and the current 0.8.13 beta |
-| Iris 1.8.14-beta.1 | Tested | Shaderpacks work; Voxy LODs are not written into Iris shadow maps to avoid shadow pass crashes |
+| Sodium 0.6.13 + Iris 1.8.12 | Tested in CI | Legacy render stack; Iris 1.8.12 is the release paired with Sodium 0.6.13 |
+| Sodium 0.8.12/0.8.13 + Iris 1.8.14-beta.1 | Tested in CI | Modern render stack; Iris 1.8.14 beta uses the Sodium 0.8 API |
 | C2ME 0.4.0 alpha (NeoForge) | Compatible, indirect | Only accelerates integrated-server chunk work; Voxy now budgets initial client LOD loading per frame to avoid world-join contention. C2ME does not accelerate Voxy on remote servers |
 | Create / Create Aeronautics | Tested | Tested in a large Create/Aeronautics client modpack; still treated as client-side compatibility |
 | Sable | Tested | Works with the current Voxy render path |
@@ -87,7 +88,7 @@ Mods not listed here are not automatically incompatible; they are just not main 
 
 1. Install Minecraft 1.21.1 with NeoForge.
 2. Install Sodium and Forgified Fabric API.
-3. Install Iris if you want shaderpack support.
+3. For shaderpack support, install Iris 1.8.12 with Sodium 0.6.13, or Iris 1.8.14-beta.1 with Sodium 0.8.x. Do not mix the two generations.
 4. Build this project and place the generated jar in the client `mods` folder.
 5. Server support is optional; place that exact same jar in the server `mods` folder when server-side LOD pre-generation is desired.
 

@@ -27,7 +27,7 @@ Alpha，但在当前测试栈上可以正常使用。
 | Minecraft | 1.21.1 |
 | NeoForge | 21.1.234 |
 | Sodium | 0.6.13-neoforge、0.8.12 和 0.8.13-beta.2+mc1.21.1 |
-| Iris | 1.8.14-beta.1+1.21.1-neoforge |
+| Iris | Sodium 0.6.13 搭配 1.8.12；Sodium 0.8.x 搭配 1.8.14-beta.1 |
 | Forgified Fabric API | 0.116.7+2.2.0+1.21.1 |
 
 ## 已支持
@@ -68,7 +68,8 @@ Alpha，但在当前测试栈上可以正常使用。
 | 模组/场景 | 状态 | 说明 |
 |-----------|------|------|
 | Sodium 0.6.13-neoforge 到 0.8.13-beta.2 | 必需，CI 测试 | 同一个 JAR 分别搭配 0.6.13、稳定版 0.8.12 和当前 0.8.13 beta 启动验证 |
-| Iris 1.8.14-beta.1 | 已测试 | 光影可用；Voxy LOD 暂不写入 Iris 阴影贴图，以避免 shadow pass 崩溃 |
+| Sodium 0.6.13 + Iris 1.8.12 | CI 测试 | 旧版渲染栈；Iris 1.8.12 是与 Sodium 0.6.13 配套的正式版 |
+| Sodium 0.8.12/0.8.13 + Iris 1.8.14-beta.1 | CI 测试 | 新版渲染栈；Iris 1.8.14 beta 使用 Sodium 0.8 API |
 | C2ME 0.4.0 alpha (NeoForge) | 兼容，间接优化 | 只加速单人世界的服务端区块任务；Voxy 的客户端 LOD 首次加载采用逐帧预算，避免进世界时集中争抢资源。连接远程服务器时 C2ME 不会加速 Voxy |
 | Create / Create Aeronautics | 已测试 | 在大型机械动力/航空学客户端整合包中测试通过，仍按客户端兼容性处理 |
 | Sable | 已测试 | 可与当前 Voxy 渲染路径共存 |
@@ -87,7 +88,7 @@ Alpha，但在当前测试栈上可以正常使用。
 
 1. 安装 Minecraft 1.21.1 + NeoForge。
 2. 安装 Sodium、Forgified Fabric API。
-3. 如果需要光影，安装 Iris。
+3. 如果需要光影，Sodium 0.6.13 请搭配 Iris 1.8.12，Sodium 0.8.x 请搭配 Iris 1.8.14-beta.1，不要跨代混装。
 4. 构建本项目，把生成的 jar 放进客户端 `mods` 文件夹。
 5. 服务端支持是可选的；需要服务端预生成缓存时，把完全相同的 jar 放入服务器 `mods` 文件夹。
 

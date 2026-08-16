@@ -20,7 +20,7 @@ Voxy 是由 [MCRcortex](https://github.com/MCRcortex) 创作的 LOD 远景渲染
 
 ## 当前状态
 
-Alpha，但在当前测试栈上可以正常使用。
+在当前测试的客户端和专用服务器环境中可以正常使用。
 
 | 组件 | 测试版本 |
 |------|----------|
@@ -88,7 +88,7 @@ Alpha，但在当前测试栈上可以正常使用。
 1. 安装 Minecraft 1.21.1 + NeoForge。
 2. 安装 Sodium、Forgified Fabric API。
 3. 如果需要光影，安装 Iris。
-4. 构建本项目，把生成的 jar 放进客户端 `mods` 文件夹。
+4. 从 [GitHub Releases](https://github.com/xiaoancute/voxy-neoforge/releases) 下载最新 JAR，放进客户端 `mods` 文件夹。
 5. 服务端支持是可选的；需要服务端预生成缓存时，把完全相同的 jar 放入服务器 `mods` 文件夹。
 
 ## 构建

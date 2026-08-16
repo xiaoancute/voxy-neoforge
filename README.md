@@ -20,7 +20,7 @@ The original Voxy mod is licensed under All Rights Reserved. Please respect the 
 
 ## Status
 
-Alpha, but usable on the tested client stack.
+Usable on the tested client and dedicated-server stack.
 
 | Component | Tested Version |
 |-----------|----------------|
@@ -88,7 +88,7 @@ Mods not listed here are not automatically incompatible; they are just not main 
 1. Install Minecraft 1.21.1 with NeoForge.
 2. Install Sodium and Forgified Fabric API.
 3. Install Iris if you want shaderpack support.
-4. Build this project and place the generated jar in the client `mods` folder.
+4. Download the latest JAR from the [GitHub Releases](https://github.com/xiaoancute/voxy-neoforge/releases) page and place it in the client `mods` folder.
 5. Server support is optional; place that exact same jar in the server `mods` folder when server-side LOD pre-generation is desired.
 
 ## Build
